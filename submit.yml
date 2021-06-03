@@ -1,0 +1,189 @@
+﻿---
+- name: connect to play
+  hosts: "{{ cluster_name }}" #"{{ cluster_name }}"  #user insert cluster name
+  gather_facts: no 
+  vars_files:
+    - vars/Access_NetApp.yml
+  collections:
+    - netapp.ontap
+  vars:
+    operation: '{{ operation }}'
+    # endtoend
+    # CIFS
+    # NFS
+
+  vars:
+    input: &input
+      hostname: "{{ inventory_hostname }}"
+      username: "{{ netapp_username }}"
+      password: "{{ netapp_password }}"
+    
+  vars_files:
+  - vars/Access_NetApp.yml
+
+  # roles:
+  #   - flow_control
+    # - interface_group
+    # - vlan_create
+    # - configure_nodelif
+    # - std_setting
+    # - disk_assignment
+    # - create_aggregate
+
+  tasks:
+  - import_role:
+      name: flow_control
+    when: "'endtoend' in operation"
+
+  - import_role:
+      name: interface_group
+    when: "'endtoend' in operation"
+
+  - import_role:
+      name: vlan_create
+    when: "'endtoend' in operation"
+
+  - import_role:
+      name: configure_nodelif
+    when: "'endtoend' in operation"
+
+  - import_role:
+      name: std_setting
+    when: "'endtoend' in operation"
+
+  - import_role:
+      name: disk_assignment
+    when: "'endtoend' in operation"
+
+  - import_role:
+      name: create_aggregate
+    when: "'endtoend' in operation"
+
+  - import_role:
+      name: ls_volume
+    when: "'CIFS' in operation or 'NFS' in operation"
+
+  - import_role:
+      name: cifs_svm
+    when: "'CIFS' in operation"
+
+  - import_role:
+      name: nfs_svm
+    when: "'NFS' in operation"
+
+  # tasks:
+  # - name: ping OOB cluster management
+  #   ping:
+  #   connection: localhost
+  #   register: ping_result
+  #   tags:
+  #     - tag_flow_control
+  #     - tag_interface_group
+  #     - tag_vlan_create
+  #     - tag_configurenodelif
+  #     - tag_std_setting
+  #     - tag_disk_assignment
+  #     - tag_cifs_svm
+  #     - tag_nfs_svm
+  #     - tag_create_aggregate
+  #     - tag_ls_volume
+
+  # - import_role:
+  #     name: flow_control
+  #   vars:
+  #     <<: *input
+  #   when: ping_result.ping == 'pong'
+  #   tags:
+  #     - tag_flow_control
+
+  # - import_role:
+  #     name: interface_group
+  #   vars:
+  #     <<: *input
+  #   when: ping_result.ping == 'pong'
+  #   tags:
+  #     - tag_interface_group
+
+  # - import_role:
+  #     name: vlan_create
+  #   vars:
+  #     <<: *input
+  #   when: ping_result.ping == 'pong'
+  #   tags:
+  #     - tag_vlan_create
+
+  # - import_role:
+  #     name: configure_nodelif
+  #   vars:
+  #     <<: *input
+  #   when: ping_result.ping == 'pong'
+  #   tags:
+  #     - tag_configurenodelif
+
+  # - import_role:
+  #     name: std_setting
+  #   vars:
+  #     <<: *input
+  #   when: ping_result.ping == 'pong'
+  #   tags:
+  #     - tag_std_setting
+  
+  # - import_role:
+  #     name: disk_assignment
+  #   vars:
+  #     <<: *input
+  #   when: ping_result.ping == 'pong'
+  #   tags:
+  #     - tag_disk_assignment
+
+  # - import_role:
+  #     name: cifs_svm
+  #   vars:
+  #     <<: *input
+  #   when: ping_result.ping == 'pong'
+  #   tags:
+  #     - tag_cifs_svm
+
+  # - import_role:
+  #     name: nfs_svm
+  #   vars:
+  #     <<: *input
+  #   when: ping_result.ping == 'pong'
+  #   tags:
+  #     - tag_nfs_svm
+
+  # - import_role:
+  #     name: create_aggregate
+  #   vars:
+  #     <<: *input
+  #   when: ping_result.ping == 'pong'
+  #   tags:
+  #     - tag_create_aggregate
+
+  # - import_role:
+  #     name: ls_volume
+  #   vars:
+  #     <<: *input
+  #   when: ping_result.ping == 'pong'
+  #   tags:
+  #     - tag_cifs_svm
+
+- name: connect to email
+  hosts: localhost
+  gather_facts: no
+
+  tasks:
+  - set_fact:
+      result_echo: "test"
+
+  - name: send email to requested user
+    mail: 
+      host: "smtp.na.xom.com"
+      port: 25
+      to: "{{ email }}"
+      from: ansible-alerts@ansible.na.xom.com
+      subject: Ansible-report
+      body: "{{ lookup('template', 'templates/mail_body.j2') }}"
+    run_once: true
+    delegate_to: localhost
+    register: result

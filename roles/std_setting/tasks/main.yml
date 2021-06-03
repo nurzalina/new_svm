@@ -1,0 +1,86 @@
+﻿---
+# This code developed by Zura
+
+- name: login
+  na_ontap_info         :
+    state               : info
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+  register: ontap_info
+
+- name: Enable autosupport on Node A
+  na_ontap_autosupport:
+    node_name: "{{ nodea_name }}"
+    transport: https
+    noteto: GSC-EMIT-STORAGE-ALERTS@exxonmobil.com
+    post_url: https://support.netapp.com/aods/asupmessage
+    mail_hosts: smtp.na.xom.com
+    support: yes
+    from_address: "{{ cluster_name }}@exxonmobil.com"
+    partner_addresses: autosupport@netapp.com
+    to_addresses: support@netapp.com
+    #proxy_url: "{{  }}"
+    hostname: "{{ cluster_name }}"
+    username: "{{ netapp_username }}"
+    password: "{{ netapp_password }}"
+    https: true
+    validate_certs: false
+  connection: local
+
+- name: Enable autosupport on Node B
+  na_ontap_autosupport:
+    node_name: "{{ nodeb_name }}"
+    transport: https
+    noteto: GSC-EMIT-STORAGE-ALERTS@exxonmobil.com
+    post_url: https://support.netapp.com/aods/asupmessage
+    mail_hosts: smtp.na.xom.com
+    support: yes
+    from_address: "{{ cluster_name }}@exxonmobil.com"
+    partner_addresses: autosupport@netapp.com
+    to_addresses: support@netapp.com
+    #proxy_url: "{{  }}"
+    hostname: "{{ cluster_name }}"
+    username: "{{ netapp_username }}"
+    password: "{{ netapp_password }}"
+    https: true
+    validate_certs: false
+  connection: local
+
+- name: Invoke ASUP Test for all nodes
+  na_ontap_command:
+    command: "set,adv,-confirmations,off,;,system,autosupport,invoke,-node,*,-type,test,-message,Testing_ASUP_Setup"
+    hostname: "{{ cluster_name }}"
+    username: "{{ netapp_username }}"
+    password: "{{ netapp_password }}"
+    https: true
+    validate_certs: false
+  connection: local
+
+- name: CDPD enable ON Node A and B
+  na_ontap_command       :
+    hostname             : "{{ cluster_name }}"
+    username             : "{{ netapp_username }}"
+    password             : "{{ netapp_password }}"
+    command              : [ 'node run -node * options cdpd.enable on' ]
+    privilege            : 'admin'
+    ontapi               : "32"
+    https                : true
+    validate_certs       : false
+  connection             : local
+
+- name: LLDP enable ON Node A and B
+  na_ontap_command       :
+    hostname             : "{{ cluster_name }}"
+    username             : "{{ netapp_username }}"
+    password             : "{{ netapp_password }}"
+    command              : [ 'node run -node * options lldp.enable on' ]
+    privilege            : 'admin'
+    ontapi               : "32"
+    https                : true
+    validate_certs       : false
+  connection             : local

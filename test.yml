@@ -1,0 +1,27 @@
+﻿---
+- name: connect to play
+  hosts: "{{ cluster_name }}" #"{{ cluster_name }}"  #user insert cluster name
+  gather_facts: no 
+  vars_files:
+    - vars/Access_NetApp.yml
+  collections:
+    - netapp.ontap
+
+  vars:
+    input: &input
+      hostname: "{{ inventory_hostname }}"
+      username: "{{ netapp_username }}"
+      password: "{{ netapp_password }}"
+      
+  vars_files:
+  - vars/Access_NetApp.yml
+
+  roles:
+    # - flow_control
+    # - interface_group
+    # - vlan_create
+    # - configure_nodelif
+    # - std_setting
+    # - disk_assignment
+    - create_aggregate
+    # cifs_svm

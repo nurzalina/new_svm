@@ -1,0 +1,102 @@
+---
+# This code developed by Dee, Joyce & Wanee
+
+- name: Create FlexVol on Node A
+  na_ontap_volume:
+    state: present
+    vserver: "{{ svm1_name }}"
+    name: "{{ svm1_name }}_root_ls{{ nodea_name.split('-')[1] }}"
+    aggregate_name: "{{ aggregatea_name }}"
+    size: 1
+    size_unit: gb
+    type: DP
+    space_guarantee: none
+    policy: default
+    wait_for_completion: True
+    comment: ansible created LS volume
+    hostname: "{{ cluster_name }}"
+    username: "{{ netapp_username }}"
+    password: "{{ netapp_password }}"
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+  register              : create_volumea_result
+
+- name: debug volume A result
+  debug:
+   msg: "{{ create_volumea_result }}"
+
+- name: Create FlexVol on Node B
+  na_ontap_volume:
+    state: present
+    vserver: "{{ svm1_name }}"
+    name: "{{ svm1_name }}_root_ls{{ nodeb_name.split('-')[1] }}"
+    aggregate_name: "{{ aggregateb_name }}"
+    size: 1
+    size_unit: gb
+    type: DP
+    space_guarantee: none
+    policy: default
+    wait_for_completion: True
+    comment: ansible created LS volume
+    hostname: "{{ cluster_name }}"
+    username: "{{ netapp_username }}"
+    password: "{{ netapp_password }}"
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+  register              : create_volumeb_result
+  
+- name: debug volume B result
+  debug:
+   msg: "{{ create_volumeb_result }}"
+
+- name: Create snapmirror for LS A
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ "snapmirror create -source-path {{ svm1_name }}:{{ svm1_name }}_root -destination-path {{ svm1_name }}:{{ svm1_name }}_root_ls{{ nodea_name.split('-')[1] }} -type LS -schedule 5min" ] 
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+  register              : snapmirror1_result
+
+- name: Create snapmirror for LS B
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ "snapmirror create -source-path {{ svm1_name }}:{{ svm1_name }}_root -destination-path {{ svm1_name }}:{{ svm1_name }}_root_ls{{ nodeb_name.split('-')[1] }} -type LS -schedule 5min" ] 
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+  register              : snapmirror2_result
+
+- name: Initialize snapmirror on Noda A
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ "snapmirror initialize -source-path {{ svm1_name }}:{{ svm1_name }}_root -destination-path {{ svm1_name }}:{{ svm1_name }}_root_ls{{ nodea_name.split('-')[1] }}" ] 
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+  register              : snapmirror3_result
+
+- name: Initialize snapmirror on Node B
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ "snapmirror initialize -source-path {{ svm1_name }}:{{ svm1_name }}_root -destination-path {{ svm1_name }}:{{ svm1_name }}_root_ls{{ nodeb_name.split('-')[1] }}" ] 
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+  register              : snapmirror3_result

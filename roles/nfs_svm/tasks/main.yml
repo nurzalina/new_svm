@@ -1,0 +1,70 @@
+﻿---
+# This code developed by Zalina
+
+
+- name: Create VLAN for SVM
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : ["network port vlan create -node {{ nodea_name | upper }} -vlan-name a0a-{{ vlan_number }}"]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Assign VLAN IFGRP to Broadcast Domain
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : ["network port broadcast-domain add-ports -broadcast-domain {{ failover_group }} -ports {{ nodea_name | upper }}:a0a-{{ vlan_number }}"]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Configure NVS SVM node A LIF
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ "network interface create -vserver {{ svm1_name | lower }} -lif {{ svm1_name | lower }}_cifs_nfs_lif{{ nodea_name.split('-')[1] | lower }} -role data -data-protocol cifs,nfs -address {{ lif_svm1a_address }} -netmask {{ lif_netmask }} -home-port a0a-{{ vlan_number }} -home-node {{ nodea_name | upper }} -auto-revert true -failover-policy broadcast-domain-wide -firewall-policy data -failover-group {{ failover_group }} -status-admin up "]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+
+- name: Create VLAN for SVM
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : ["network port vlan create -node {{ nodeb_name | upper }} -vlan-name a0a-{{ vlan_number }}"]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Assign VLAN IFGRP to Broadcast Domain
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : ["network port broadcast-domain add-ports -broadcast-domain {{ failover_group }} -ports {{ nodeb_name | upper }}:a0a-{{ vlan_number }}"]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Configure NVS SVM node B LIF
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ "network interface create -vserver {{ svm1_name | lower }} -lif {{ svm1_name | lower }}_cifs_nfs_lif{{ nodeb_name.split('-')[1] | lower }} -role data -data-protocol cifs,nfs -address {{ lif_svm1b_address }} -netmask {{ lif_netmask }} -home-port a0a-{{ vlan_number }} -home-node {{ nodeb_name | upper }} -auto-revert true -failover-policy broadcast-domain-wide -firewall-policy data -failover-group {{ failover_group }} -status-admin up "]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local

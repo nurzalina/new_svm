@@ -1,0 +1,13 @@
+﻿{% if cluster_name in hostvars %}
+{% for host in hostvars %}
+{% if host == cluster_name %}
+{% if hostvars[cluster_name] %}
+{{ email }} Node expansion request for {{ cluster_name }} is Successful. Please proceed with other request for required else please disregard this email.
+{% else %}
+{% set error = "Unsucessfull, possibility due to Undefined host. Please ensure your host is correct or proceed with the node expansion." %}
+{% endif %}
+{% endif %}
+{% endfor %}
+{% else %} 
+{% set error = "Unsucessfull, possibility due to Undefined host. Please ensure your host is correct or proceed with the node expansion." %}
+{% endif %}

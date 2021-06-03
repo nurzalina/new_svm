@@ -1,0 +1,47 @@
+﻿---
+# This code developed by Zalina
+
+- name: Configure node A LIF
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'network interface create -vserver {{ cluster_name | upper }} -lif {{ nodea_name }}_mgmt1 -address {{ lifa_address }} -netmask {{ lif_netmask }} -home-port a0a-{{ vlan_number }} -home-node {{ nodea_name }} -auto-revert true -failover-group {{ failover_group }} ']
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+  
+- name: Configure node B LIF
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'network interface create -vserver {{ cluster_name | upper }} -lif {{ nodeb_name }}_mgmt1 -address {{ lifb_address }} -netmask {{ lif_netmask }} -home-port a0a-{{ vlan_number }} -home-node {{ nodeb_name }} -auto-revert true -failover-group {{ failover_group }} ']
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Configure node A INTERCLUSTER LIF
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'network interface create -vserver {{ cluster_name | upper }} -lif {{ nodea_name | lower }}icl1 -role intercluster -address {{ lif_icla_address }} -netmask {{ lificl_netmask }} -home-port a0a-{{ vlanicl_number }} -home-node {{ nodea_name }} -auto-revert true -failover-policy local-only -firewall-policy intercluster -failover-group {{ failovericl_group }} ']
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+  
+- name: Configure node B INTERCLUSTER LIF
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'network interface create -vserver {{ cluster_name | upper }} -lif {{ nodeb_name | lower }}icl1 -role intercluster -address {{ lif_iclb_address }} -netmask {{ lificl_netmask }} -home-port a0a-{{ vlanicl_number }} -home-node {{ nodeb_name }} -auto-revert true -failover-policy local-only -firewall-policy intercluster -failover-group {{ failovericl_group }} ']
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
