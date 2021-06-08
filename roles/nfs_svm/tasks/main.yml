@@ -15,48 +15,22 @@
     language            : c.utf_8
     snapshot_policcy    : default
     ipspace             : Default
-    comment             : "NFS primary with multi-protocol CIFS"
+    comment             : NFS primary with multi-protocol CIFS
     ontapi              : 32
     https               : true
     validate_certs      : false
   connection            : local
-  
 
 - name: Create SVM using CLI
   na_ontap_command:
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : ["vserver create -vserver {{ svm_name | lower }} -subtype default -rootvolume {{ svm_name | lower }}_root -aggregate {{ aggr_name }} -rootvolume-security-style unix -language C.UTF-8 -snapshot-policy default -ipspace Default -comment "NFS primary with multi-protocol CIFS""]
+    command             : ["vserver create -vserver {{ svm_name | lower }} -subtype default -rootvolume {{ svm_name | lower }}_root -aggregate {{ aggr_name }} -rootvolume-security-style unix -language C.UTF-8 -snapshot-policy default -ipspace Default -comment "NFS primary with multi-protocol CIFS" " ]
     ontapi              : 32
     https               : true
     validate_certs      : false
   connection            : local
-
-
-- name: Enable 64bit Identifiers on NFSv3
-  na_ontap_command:
-    hostname            : "{{ cluster_name }}"
-    username            : "{{ netapp_username }}"
-    password            : "{{ netapp_password }}"
-    command             : "set,adv,-confirmations,off,;,nfs,server,modify,-vserver,{{ svm_name | lower }},-v3-64bit-identifiers,enabled"
-    ontapi              : 32
-    https               : true
-    validate_certs      : false
-  connection            : local
-
-
-- name: Enable 64bit Identifiers on NFSv4
-  na_ontap_command:
-    hostname            : "{{ cluster_name }}"
-    username            : "{{ netapp_username }}"
-    password            : "{{ netapp_password }}"
-    command             : "set,adv,-confirmations,off,;,nfs,server,modify,-vserver,{{ svm_name | lower }},–v4-64bit-identifiers,enabled"
-    ontapi              : 32
-    https               : true
-    validate_certs      : false
-  connection            : local
-
 
 - name: Create MGMT interface using ansible
   na_ontap_interface:
@@ -75,6 +49,58 @@
     admin_status        : up
     failover_policy     : broadcast-domain-wide
     firewall_policy     : mgmt
+    is_auto_revert      : true
+    failover_group      : "{{ failover_group }}"
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Create NVS SVM node A LIF using ansible
+  na_ontap_interface:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    state               : present
+    vserver             : "{{ svm_name | lower }}"
+    interface_name      : "{{ svm_name | lower }}"_cifs_nfs_lif01
+    home_port           : a0a-"{{ vlan }}"
+    home_node           : "{{ cluster_name | upper }}-01"
+    role                : data
+    protocols           :
+      - cifs
+      - nfs
+    address             : "{{ svm_lif1_ip }}"
+    netmask             : "{{ svm_netmask }}"
+    admin_status        : up
+    failover_policy     : broadcast-domain-wide
+    firewall_policy     : data
+    is_auto_revert      : true
+    failover_group      : "{{ failover_group }}"
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Create NVS SVM node B LIF using ansible
+  na_ontap_interface:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    state               : present
+    vserver             : "{{ svm_name | lower }}"
+    interface_name      : "{{ svm_name | lower }}"_cifs_nfs_lif02
+    home_port           : a0a-"{{ vlan }}"
+    home_node           : "{{ cluster_name | upper }}-02"
+    role                : data
+    protocols           :
+      - cifs
+      - nfs
+    address             : "{{ svm_lif2_ip }}"
+    netmask             : "{{ svm_netmask }}"
+    admin_status        : up
+    failover_policy     : broadcast-domain-wide
+    firewall_policy     : data
     is_auto_revert      : true
     failover_group      : "{{ failover_group }}"
     ontapi              : 32
@@ -111,6 +137,83 @@
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
     command             : [ "network interface create -vserver {{ svm_name | lower }} -lif {{ svm_name | lower }}_cifs_nfs_lif02 -role data -data-protocol cifs,nfs -address {{ svm_lif2_ip }} -netmask {{ svm_netmask }} -home-port a0a-{{ vlan }} -home-node {{ cluster_name | upper }}-02 -auto-revert true -failover-policy broadcast-domain-wide -firewall-policy data -failover-group {{ failover_group }} -status-admin up " ]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Enable NFS on SVM
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ "nfs create -vserver {{ svm_name }} -access true -v3 enabled -v4.1 enabled -vstorage enabled -showmount enabled" ]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Setup NIS on SVM (Not Compulsary)
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ "vserver services name-service nis-domain create -vserver {{ svm_name }} -domain {{ nis_domain }} -active true -servers {{ nis_ip }}" ]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Enable 64bit Identifiers on NFSv3
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : "set,adv,-confirmations,off,;,nfs,server,modify,-vserver,{{ svm_name | lower }},-v3-64bit-identifiers,enabled"
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Enable 64bit Identifiers on NFSv4
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : "set,adv,-confirmations,off,;,nfs,server,modify,-vserver,{{ svm_name | lower }},–v4-64bit-identifiers,enabled"
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Modify NSSWITCH - Passwd DB
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ "vserver services name-service ns-switch modify -vserver {{ svm_name }} -database passwd -sources files,nis" ]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+  - name: Modify NSSWITCH - Netgroup DB
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ "vserver services name-service ns-switch modify -vserver {{ svm_name }} -database netgroup -sources files,nis" ]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+  - name: Modify NSSWITCH - Group DB
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ "vserver services name-service ns-switch modify -vserver {{ svm_name }} -database group -sources files,nis" ]
     ontapi              : 32
     https               : true
     validate_certs      : false
