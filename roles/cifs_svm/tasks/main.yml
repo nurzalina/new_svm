@@ -8,7 +8,7 @@
     password            : "{{ netapp_password }}"
     state               : present
     name                : "{{ svm_name | lower }}"
-    root_volume         : "{{ svm_name | lower }}"_root
+    root_volume         : "{{ svm_name | lower }}_root"
     root_volume_aggregate: "{{ aggr_name }}"
     root_volume_security_style: ntfs
     language            : C.UTF-8
@@ -27,8 +27,8 @@
     password            : "{{ netapp_password }}"
     state               : present
     vserver             : "{{ svm_name | lower }}"
-    interface_name      : "{{ svm_name | lower }}"_mgmt
-    home_port           : a0a-"{{ vlan }}"
+    interface_name      : "{{ svm_name | lower }}_mgmt"
+    home_port           : "a0a-{{ vlan }}"
     home_node           : "{{ cluster_name | upper }}-01"
     role                : data
     protocols           : none
@@ -51,11 +51,11 @@
     password            : "{{ netapp_password }}"
     state               : present
     vserver             : "{{ svm_name | lower }}"
-    interface_name      : "{{ svm_name | lower }}"_cifs_lif1
+    interface_name      : "{{ svm_name | lower }}_cifs_lif01"
     role                : data
     protocols           : cifs
     home_node           : "{{ cluster_name | upper }}-01"
-    home_port           : a0a-"{{ vlan }}"
+    home_port           : "a0a-{{ vlan }}"
     address             : "{{ svm_lif1_ip }}"
     netmask             : "{{ svm_netmask }}"
     admin_status        : up
@@ -75,11 +75,11 @@
     password            : "{{ netapp_password }}"
     state               : present
     vserver             : "{{ svm_name | lower }}"
-    interface_name      : "{{ svm_name | lower }}"_cifs_lif2
+    interface_name      : "{{ svm_name | lower }}_cifs_lif02"
     role                : data
     protocols           : cifs
     home_node           : "{{ cluster_name | upper }}-02"
-    home_port           : a0a-"{{ vlan }}"
+    home_port           : "a0a-{{ vlan }}"
     address             : "{{ svm_lif2_ip }}"
     netmask             : "{{ svm_netmask }}"
     admin_status        : up
