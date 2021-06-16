@@ -114,7 +114,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : ["network interface create -vserver  -lif {{ svm_name | lower }}_mgmt -role data -data-protocol none -home-node {{ cluster_name }}-01 -home-port a0a-{{ vlan }} -address {{ svm_mgmt_ip }} -netmask {{ svm_netmask }} -status-admin up -failover-policy broadcast-domain-wide -firewall-policy mgmt -auto-revert true -failover-group {{ failover_group }}"]
+    command             : ["network interface create -vserver  -lif {{ svm_name | lower }}_mgmt -role data -data-protocol none -home-node {{ cluster_name }}-01 -home-port a0a-{{ vlan }} -address {{ svm_ip }} -netmask {{ svm_netmask }} -status-admin up -failover-policy broadcast-domain-wide -firewall-policy mgmt -auto-revert true -failover-group {{ failover_group }}"]
     ontapi              : 32
     https               : true
     validate_certs      : false
