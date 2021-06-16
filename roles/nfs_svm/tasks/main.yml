@@ -89,8 +89,8 @@
     password            : "{{ netapp_password }}"
     state               : present
     vserver             : "{{ svm_name | lower }}"
-    interface_name      : "{{ svm_name | lower }}"_cifs_nfs_lif02
-    home_port           : a0a-"{{ vlan }}"
+    interface_name      : "{{ svm_name | lower }}_cifs_nfs_lif02"
+    home_port           : "a0a-{{ vlan }}"
     home_node           : "{{ cluster_name | upper }}-02"
     role                : data
     protocols           :
