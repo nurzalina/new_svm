@@ -9,7 +9,7 @@
     state               : present
     name                : "{{ svm_name | lower }}"
     subtype             : default
-    root_volume         : "{{ svm_name | lower }}"_root
+    root_volume         : "{{ svm_name | lower }}_root"
     root_volume_aggregate: "{{ aggr_name }}"
     root_volume_security_style: unix
     language            : c.utf_8
@@ -39,8 +39,8 @@
     password            : "{{ netapp_password }}"
     state               : present
     vserver             : "{{ svm_name | lower }}"
-    interface_name      : "{{ svm_name | lower }}"_mgmt
-    home_port           : a0a-"{{ vlan }}"
+    interface_name      : "{{ svm_name | lower }}_mgmt"
+    home_port           : "a0a-{{ vlan }}"
     home_node           : "{{ cluster_name | upper }}-01"
     role                : data
     protocols           : none
@@ -63,8 +63,8 @@
     password            : "{{ netapp_password }}"
     state               : present
     vserver             : "{{ svm_name | lower }}"
-    interface_name      : "{{ svm_name | lower }}"_cifs_nfs_lif01
-    home_port           : a0a-"{{ vlan }}"
+    interface_name      : "{{ svm_name | lower }}_cifs_nfs_lif01"
+    home_port           : "a0a-{{ vlan }}"
     home_node           : "{{ cluster_name | upper }}-01"
     role                : data
     protocols           :
