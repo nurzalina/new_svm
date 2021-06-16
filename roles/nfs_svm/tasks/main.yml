@@ -21,40 +21,40 @@
     validate_certs      : false
   connection            : local
 
-# - name: Create SVM using CLI
-#   na_ontap_command:
-#     hostname            : "{{ cluster_name }}"
-#     username            : "{{ netapp_username }}"
-#     password            : "{{ netapp_password }}"
-#     command             : ["vserver create -vserver {{ svm_name | lower }} -subtype default -rootvolume {{ svm_name | lower }}_root -aggregate {{ aggr_name }} -rootvolume-security-style unix -language C.UTF-8 -snapshot-policy default -ipspace Default -comment "NFS primary with multi-protocol CIFS" " ]
-#     ontapi              : 32
-#     https               : true
-#     validate_certs      : false
-#   connection            : local
-
-- name: Create MGMT interface using ansible
-  na_ontap_interface:
+- name: Create SVM using CLI
+  na_ontap_command:
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    state               : present
-    vserver             : "{{ svm_name | lower }}"
-    interface_name      : "{{ svm_name | lower }}_mgmt"
-    home_port           : "a0a-{{ vlan }}"
-    home_node           : "{{ cluster_name | upper }}-01"
-    role                : data
-    protocols           : none
-    address             : "{{ svm_ip }}"
-    netmask             : "{{ svm_netmask }}"
-    admin_status        : up
-    failover_policy     : broadcast-domain-wide
-    firewall_policy     : mgmt
-    is_auto_revert      : true
-    failover_group      : "{{ failover_group }}"
+    command             : ["vserver create -vserver {{ svm_name | lower }} -subtype default -rootvolume {{ svm_name | lower }}_root -aggregate {{ aggr_name }} -rootvolume-security-style unix -language C.UTF-8 -snapshot-policy default -ipspace Default -comment "NFS primary with multi-protocol CIFS" " ]
     ontapi              : 32
     https               : true
     validate_certs      : false
   connection            : local
+
+# - name: Create MGMT interface using ansible
+  # na_ontap_interface:
+  #   hostname            : "{{ cluster_name }}"
+  #   username            : "{{ netapp_username }}"
+  #   password            : "{{ netapp_password }}"
+  #   state               : present
+  #   vserver             : "{{ svm_name | lower }}"
+  #   interface_name      : "{{ svm_name | lower }}_mgmt"
+  #   home_port           : "a0a-{{ vlan }}"
+  #   home_node           : "{{ cluster_name | upper }}-01"
+  #   role                : data
+  #   protocols           : none
+  #   address             : "{{ svm_ip }}"
+  #   netmask             : "{{ svm_netmask }}"
+  #   admin_status        : up
+  #   failover_policy     : broadcast-domain-wide
+  #   firewall_policy     : mgmt
+  #   is_auto_revert      : true
+  #   failover_group      : "{{ failover_group }}"
+  #   ontapi              : 32
+  #   https               : true
+  #   validate_certs      : false
+  # connection            : local
 
 - name: Create NVS SVM node A LIF using ansible
   na_ontap_interface:
