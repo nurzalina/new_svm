@@ -23,5 +23,5 @@
     # - configure_nodelif
     # - std_setting
     # - disk_assignment
-    - create_aggregate
+    - nfs_svm
     # cifs_svm
