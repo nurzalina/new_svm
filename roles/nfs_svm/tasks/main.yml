@@ -3,7 +3,7 @@
 
 - name: Create SVM using ansible
   na_ontap_svm:
-    hostname            : "{{ cluster_hostname }}"
+    hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
     state               : present
