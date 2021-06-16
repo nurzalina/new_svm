@@ -198,7 +198,7 @@
   connection            : local
 
 - name: Modify NSSWITCH - Netgroup DB
-    na_ontap_command:
+  na_ontap_command:
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
