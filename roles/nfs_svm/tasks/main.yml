@@ -13,7 +13,7 @@
     root_volume_aggregate: "{{ aggr_name }}"
     root_volume_security_style: unix
     language            : c.utf_8
-    snapshot_policcy    : default
+    snapshot_policy    : default
     ipspace             : Default
     comment             : NFS primary with multi-protocol CIFS
     ontapi              : 32
