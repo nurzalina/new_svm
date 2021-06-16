@@ -197,8 +197,8 @@
     validate_certs      : false
   connection            : local
 
-  - name: Modify NSSWITCH - Netgroup DB
-  na_ontap_command:
+- name: Modify NSSWITCH - Netgroup DB
+    na_ontap_command:
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
@@ -208,7 +208,7 @@
     validate_certs      : false
   connection            : local
 
-  - name: Modify NSSWITCH - Group DB
+- name: Modify NSSWITCH - Group DB
   na_ontap_command:
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
