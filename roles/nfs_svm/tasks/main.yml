@@ -26,7 +26,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : ["vserver create -vserver {{ svm_name | lower }} -subtype default -rootvolume {{ svm_name | lower }}_root -aggregate {{ aggr_name }} -rootvolume-security-style unix -language C.UTF-8 -snapshot-policy default -ipspace Default -comment "NFS primary with multi-protocol CIFS" " ]
+    command             : [ "vserver create -vserver {{ svm_name | lower }} -subtype default -rootvolume {{ svm_name | lower }}_root -aggregate {{ aggr_name }} -rootvolume-security-style unix -language C.UTF-8 -snapshot-policy default -ipspace Default -comment 'NFS primary with multi-protocol CIFS' " ]
     ontapi              : 32
     https               : true
     validate_certs      : false
