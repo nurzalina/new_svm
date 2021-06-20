@@ -18,7 +18,7 @@
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
     state               : present
-    name                : "{{ svm_name }}"
+    name                : "{{ svm_name | upper }}"
     vserver             : "{{ svm_name }}"
     service_state       : started
     domain              : "{{ domain_name }}"
