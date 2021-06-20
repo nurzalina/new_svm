@@ -20,7 +20,7 @@
     validate_certs      : false
   connection            : local
 
-- name: Create NVS SVM MGMT LIF using CLI
+- name: Create CIFS SVM MGMT LIF using CLI
   na_ontap_command:
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
@@ -31,7 +31,7 @@
     validate_certs      : false
   connection            : local
 
-- name: Configure NVS SVM node A LIF using CLI
+- name: Configure CIFS SVM node A LIF using CLI
   na_ontap_command:
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
@@ -42,7 +42,7 @@
     validate_certs      : false
   connection            : local
 
-- name: Configure NVS SVM node B LIF using CLI
+- name: Configure CIFS SVM node B LIF using CLI
   na_ontap_command:
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
