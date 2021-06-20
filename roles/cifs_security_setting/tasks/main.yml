@@ -1,1 +1,33 @@
 ﻿
+- name: Enable CIFS setting 1
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : "set,adv,-confirmations,off,;,vserver,cifs,options,modify,-vserver,{{ svm_name | lower }},-max-mpx,1124"
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Enable CIFS setting 2
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : "set,adv,-confirmations,off,;,vserver,cifs,options,modify,-vserver,{{ svm_name | lower }},-smb2-enabled,true"
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Enable CIFS setting 3
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : "set,adv,-confirmations,off,;,vserver,cifs,security,modify,-vserver,{{ svm_name | lower }},-is-signing-required,false"
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
