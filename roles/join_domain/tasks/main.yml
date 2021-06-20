@@ -6,7 +6,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : [ "vserver cifs create -vserver {{ svm_name }} -cifs-server {{ svm_name | upper }} -domain {{ domain_name }} -ou OU=NTAP,OU="Standard Servers" -status-admin up"]
+    command             : [ "vserver cifs create -vserver {{ svm_name }} -cifs-server {{ svm_name | upper }} -domain {{ domain_name }} -ou OU=NTAP,OU=\"Standard Servers\" -status-admin up"]
     ontapi              : 32
     https               : true
     validate_certs      : false

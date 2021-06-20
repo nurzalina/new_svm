@@ -6,7 +6,7 @@
     state               : present
     vserver             : "{{ svm_name }}"
     name                : "{{ svm_name }}_root_ls01"
-    aggregate_name      : "{{ aggr_name }}"
+    aggregate_name      : "{{ aggr_a_name }}"
     size                : 1
     size_unit           : gb
     type                : DP
@@ -27,7 +27,7 @@
     state               : present
     vserver             : "{{ svm_name }}"
     name                : "{{ svm_name }}_root_ls02"
-    aggregate_name      : "{{ aggr2_name }}"
+    aggregate_name      : "{{ aggr_b_name }}"
     size                : 1
     size_unit           : gb
     type                : DP
