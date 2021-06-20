@@ -18,7 +18,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : [ "dns create -vserver {{ svm_name | lower }} -domains na.xom.com,upstreamaccts.xom.com,ups.xom.com,ap.xom.com,ea.xom.com -timeout 2  -attempts 1 -name-servers 10.1.4.11,10.1.4.12,{{ local_dns }} -state enabled" ]
+    command             : [ "dns create -vserver {{ svm_name | lower }} -domains na.xom.com,upstreamaccts.xom.com,ups.xom.com,ap.xom.com,ea.xom.com -timeout 2  -attempts 1 -name-servers 10.1.4.11,10.1.4.12 -state enabled" ]
     ontapi              : 32
     https               : true
     validate_certs      : false
