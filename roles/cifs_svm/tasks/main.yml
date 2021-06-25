@@ -96,7 +96,7 @@
     failover_policy     : broadcast-domain-wide
     firewall_policy     : data
     is_auto_revert      : true
-    failover_group      : "{{ failover_group }}"
+    subnet_name         : "{{ failover_group }}"
     ontapi              : 32
     https               : true
     validate_certs      : false
