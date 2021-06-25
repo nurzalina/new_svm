@@ -79,7 +79,7 @@
 #   connection            : local
 
 - name: Create CIFS SVM node A LIF
-  netapp.ontap.na_ontap_interface:
+  na_ontap_interface:
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
