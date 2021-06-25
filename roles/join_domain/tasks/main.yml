@@ -31,11 +31,11 @@
 
 - name: Create cifs_server
   na_ontap_cifs_server:
-    cifs_server_name    : "{{ svm_name | upper }}"
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
     state               : present
+    cifs_server_name    : "{{ svm_name | upper }}"
     vserver             : "{{ svm_name }}"
     service_state       : started
     domain              : "{{ domain_name }}"
