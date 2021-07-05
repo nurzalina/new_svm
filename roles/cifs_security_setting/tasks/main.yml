@@ -34,19 +34,78 @@
 
 - name: Create FSAAPermission Role with access READONLY
   na_ontap_user_role:
-    hostname: "{{ cluster_name }}"
-    username: "{{ netapp_username }}"
-    password: "{{ netapp_password }}"
-    state: present
-    name: FSAAPermission
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    state               : present
+    name                : FSAAPermission
     command_directory_name: 
       - version
       - vserver cifs share show
       - vserver fpolicy
       - volume show
       - security login rol show-ontapi
-    access_level: readonly
-    vserver: "{{ svm_name }}"
+    access_level        : readonly
+    vserver             : "{{ svm_name | lower }}"
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+# - name: Create role 1
+#   na_ontap_command:
+#     hostname            : "{{ cluster_name }}"
+#     username            : "{{ netapp_username }}"
+#     password            : "{{ netapp_password }}"
+#     command             : [ 'security login role create -role FSAAPermission -vserver {{ svm_name | lower }} -access readonly -cmddirname version' ]
+#     ontapi              : 32
+#     https               : true
+#     validate_certs      : false
+#   connection            : local
+
+# - name: Create role 2
+#   na_ontap_command:
+#     hostname            : "{{ cluster_name }}"
+#     username            : "{{ netapp_username }}"
+#     password            : "{{ netapp_password }}"
+#     command             : [ 'security login role create -role FSAAPermission -vserver {{ svm_name | lower }} -access readonly -cmddirname "vserver cifs share show" ' ]
+#     ontapi              : 32
+#     https               : true
+#     validate_certs      : false
+#   connection            : local
+
+# - name: Create role 3
+#   na_ontap_command:
+#     hostname            : "{{ cluster_name }}"
+#     username            : "{{ netapp_username }}"
+#     password            : "{{ netapp_password }}"
+#     command             : [ 'security login role create -role FSAAPermission -vserver {{ svm_name | lower }} -access readonly -cmddirname "vserver fpolicy" ' ]
+#     ontapi              : 32
+#     https               : true
+#     validate_certs      : false
+#   connection            : local
+
+#   - name: Create role 4
+#   na_ontap_command:
+#     hostname            : "{{ cluster_name }}"
+#     username            : "{{ netapp_username }}"
+#     password            : "{{ netapp_password }}"
+#     command             : [ 'security login role create -role FSAAPermission -vserver {{ svm_name | lower }} -access readonly -cmddirname "volume show" ' ]
+#     ontapi              : 32
+#     https               : true
+#     validate_certs      : false
+#   connection            : local
+
+# - name: Create role 5
+#   na_ontap_command:
+#     hostname            : "{{ cluster_name }}"
+#     username            : "{{ netapp_username }}"
+#     password            : "{{ netapp_password }}"
+#     command             : [ 'security login role create -role FSAAPermission -vserver {{ svm_name | lower }} -access readonly -cmddirname "security login rol show-ontapi" ' ]
+#     ontapi              : 32
+#     https               : true
+#     validate_certs      : false
+#   connection            : local
 
 - name: Add User per security model
   na_ontap_command:
