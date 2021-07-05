@@ -44,7 +44,7 @@
       - vserver cifs share show
       - vserver fpolicy
       - volume show
-      - security login rol show-ontapi
+      - security login role show-ontapi
     access_level        : readonly
     vserver             : "{{ svm_name | lower }}"
     ontapi              : 32
