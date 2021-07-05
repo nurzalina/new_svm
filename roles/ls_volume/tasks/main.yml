@@ -3,20 +3,20 @@
 
 - name: Create FlexVol on Node A
   na_ontap_volume:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
     state               : present
-    vserver             : "{{ svm_name }}"
-    name                : "{{ svm_name }}_root_ls01"
+    vserver             : "{{ svm_name | lower }}"
+    name                : "{{ svm_name | lower }}_root_ls01"
     aggregate_name      : "{{ aggr_a_name }}"
     size                : 1
     size_unit           : gb
     type                : DP
     space_guarantee     : none
     policy              : default
-    wait_for_completion : True
+    wait_for_completion : true
     comment             : ansible created LS volume
-    hostname            : "{{ cluster_name }}"
-    username            : "{{ netapp_username }}"
-    password            : "{{ netapp_password }}"
     ontapi              : 32
     https               : true
     validate_certs      : false
@@ -24,20 +24,20 @@
 
 - name: Create FlexVol on Node B
   na_ontap_volume:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
     state               : present
-    vserver             : "{{ svm_name }}"
-    name                : "{{ svm_name }}_root_ls02"
+    vserver             : "{{ svm_name | lower }}"
+    name                : "{{ svm_name | lower }}_root_ls02"
     aggregate_name      : "{{ aggr_b_name }}"
     size                : 1
     size_unit           : gb
     type                : DP
     space_guarantee     : none
     policy              : default
-    wait_for_completion : True
+    wait_for_completion : true
     comment             : ansible created LS volume
-    hostname            : "{{ cluster_name }}"
-    username            : "{{ netapp_username }}"
-    password            : "{{ netapp_password }}"
     ontapi              : 32
     https               : true
     validate_certs      : false
@@ -48,7 +48,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : [ "snapmirror create -source-path {{ svm_name }}:{{ svm_name }}_root -destination-path {{ svm_name }}:{{ svm_name }}_root_ls01 -type LS -schedule 5min" ] 
+    command             : [ "snapmirror create -source-path {{ svm_name | lower }}:{{ svm_name | lower }}_root -destination-path {{ svm_name | lower }}:{{ svm_name | lower }}_root_ls01 -type LS -schedule 5min" ] 
     ontapi              : 32
     https               : true
     validate_certs      : false
@@ -59,7 +59,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : [ "snapmirror create -source-path {{ svm_name }}:{{ svm_name }}_root -destination-path {{ svm_name }}:{{ svm_name }}_root_ls02 -type LS -schedule 5min" ] 
+    command             : [ "snapmirror create -source-path {{ svm_name | lower }}:{{ svm_name | lower }}_root -destination-path {{ svm_name | lower }}:{{ svm_name | lower }}_root_ls02 -type LS -schedule 5min" ] 
     ontapi              : 32
     https               : true
     validate_certs      : false
@@ -70,7 +70,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : [ "snapmirror initialize-ls-set -source-path {{ svm_name }}:{{ svm_name }}_root" ] 
+    command             : [ "snapmirror initialize-ls-set -source-path {{ svm_name | lower }}:{{ svm_name | lower }}_root" ] 
     ontapi              : 32
     https               : true
     validate_certs      : false

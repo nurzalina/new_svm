@@ -36,7 +36,7 @@
     password            : "{{ netapp_password }}"
     state               : present
     cifs_server_name    : "{{ svm_name | upper }}"
-    vserver             : "{{ svm_name }}"
+    vserver             : "{{ svm_name | lower }}"
     service_state       : started
     domain              : "{{ domain_name }}"
     ou                  : OU=NTAP,OU="Standard Servers"

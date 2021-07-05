@@ -24,7 +24,6 @@
 #     validate_certs      : false
 #   connection            : local
 
-
 # Below is using ansible module
 
 - name: Create CIFS SVM default route
