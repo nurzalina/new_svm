@@ -24,8 +24,8 @@
     # - std_setting
     # - disk_assignment
     # nfs_svm
-    - cifs_svm
-    - route_dns
-    - join_domain
-    - ls_volume
-    # - cifs_security_setting
+    # - cifs_svm
+    # - route_dns
+    # - join_domain
+    # - ls_volume
+    - cifs_security_setting
