@@ -26,6 +26,6 @@
     # nfs_svm
     - cifs_svm
     - route_dns
-    - join_domain
-    - ls_volume
-    - cifs_security_setting
+    # - join_domain
+    # - ls_volume
+    # - cifs_security_setting
