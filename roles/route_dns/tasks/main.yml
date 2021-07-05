@@ -50,8 +50,6 @@
     vserver             : "{{ svm_name | lower }}"
     domains             : na.xom.com,upstreamaccts.xom.com,ups.xom.com,ap.xom.com,ea.xom.com
     nameservers         : 10.1.4.11,10.1.4.12
-    timeout             : 2
-    attempts            : 1
     skip_validation     : true
     state               : enabled
     ontapi              : 32
