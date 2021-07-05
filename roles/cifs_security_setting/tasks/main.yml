@@ -32,6 +32,22 @@
     validate_certs      : false
   connection            : local
 
+- name: Create FSAAPermission Role with access READONLY
+  na_ontap_user_role:
+    state: present
+    name: FSAAPermission
+    command_directory_name: 
+      - version
+      - vserver cifs share show
+      - vserver fpolicy
+      - volume show
+      - security login rol show-ontapi
+    access_level: readonly
+    vserver: "{{ svm_name }}"
+    hostname: "{{ cluster_hostname }}"
+    username: "{{ netapp_username }}"
+    password: "{{ netapp_password }}"
+
 - name: Add User per security model
   na_ontap_command:
     hostname            : "{{ cluster_name }}"
