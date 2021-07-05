@@ -34,6 +34,9 @@
 
 - name: Create FSAAPermission Role with access READONLY
   na_ontap_user_role:
+    hostname: "{{ cluster_name }}"
+    username: "{{ netapp_username }}"
+    password: "{{ netapp_password }}"
     state: present
     name: FSAAPermission
     command_directory_name: 
@@ -44,9 +47,6 @@
       - security login rol show-ontapi
     access_level: readonly
     vserver: "{{ svm_name }}"
-    hostname: "{{ cluster_hostname }}"
-    username: "{{ netapp_username }}"
-    password: "{{ netapp_password }}"
 
 - name: Add User per security model
   na_ontap_command:
