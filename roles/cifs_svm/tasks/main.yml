@@ -1,8 +1,8 @@
 ﻿---
-This code developed by Zura
+# This code developed by Zura
 
 - name: Create CIFS SVM
-  netapp.ontap.na_ontap_svm:
+  na_ontap_svm:
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
