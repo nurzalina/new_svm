@@ -108,7 +108,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : ["security login create -user-or-group-name {{ domain_name.split('.')[0]/xsStealthAUDITProxy }} -application ontapi -authentication-method domain -role FSAAPermission -vserver {{ svm_name | lower }}"]
+    command             : [' security login create -user-or-group-name "{{ domain_name.split('.')[0] }}\\xsStealthAUDITProxy" -application ontapi -authentication-method domain -role FSAAPermission -vserver {{ svm_name | lower }}"]
     ontapi              : 32
     https               : true
     validate_certs      : false
