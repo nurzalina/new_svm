@@ -81,7 +81,7 @@
     validate_certs      : false
   connection            : local
 
-  - name: Create role 4
+- name: Create role 4
   na_ontap_command:
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
