@@ -103,29 +103,34 @@
     validate_certs      : false
   connection            : local
 
-- name: Add User per security model
-  na_ontap_command:
+# - name: Add User per security model
+#   na_ontap_command:
+#     hostname            : "{{ cluster_name }}"
+#     username            : "{{ netapp_username }}"
+#     password            : "{{ netapp_password }}"
+#     command             : [' security login create -user-or-group-name "{{ domain_name.split(".")[0] }}\\xsStealthAUDITProxy" -application ontapi -authentication-method domain -role FSAAPermission -vserver {{ svm_name | lower }}"]
+#     ontapi              : 32
+#     https               : true
+#     validate_certs      : false
+#   connection            : local
+
+- name: Add User - Security Model
+  na_ontap_user:
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : [' security login create -user-or-group-name "{{ domain_name.split('.')[0] }}\\xsStealthAUDITProxy" -application ontapi -authentication-method domain -role FSAAPermission -vserver {{ svm_name | lower }}"]
+    state               : present
+    name                : "{{ domain_name.split('.')[0] }}\\xsStealthAUDITProxy"
+    applications        : ontapi
+    authentication_method: domain
+    role_name           : readonly
+    vserver             : "{{ svm_name | lower }}"
     ontapi              : 32
     https               : true
     validate_certs      : false
   connection            : local
 
-# - name: Add User - Security Model
-#   na_ontap_user:
-#     hostname            : "{{ cluster_name }}"
-#     username            : "{{ netapp_username }}"
-#     password            : "{{ netapp_password }}"
-#     state               : present
-#     name                : "{{ domain_name.split('.')[1] }}\xsStealthAUDITProxy"
-#     applications        : ontapi
-#     authentication_method: domain
-#     role_name           : readonly
-#     vserver             : "{{ svm_name | lower }}"
-
+  
 # - name: Add member to CIFS local group
 #   na_ontap_cifs_local_group_member:
 #     hostname            : "{{ cluster_name }}"
