@@ -39,7 +39,7 @@
     password            : "{{ netapp_password }}"
     state               : present
     name                : FSAAPermission
-    command_directory_name: version,"vserver cifs share show","vserver fpolicy","volume show","security login role show-ontapi"
+    command_directory_name: vserver cifs share show
     access_level        : readonly
     query               : show
     vserver             : "{{ svm_name | lower }}"
