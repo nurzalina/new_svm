@@ -103,17 +103,6 @@
     validate_certs      : false
   connection            : local
 
-# - name: Add User per security model
-#   na_ontap_command:
-#     hostname            : "{{ cluster_name }}"
-#     username            : "{{ netapp_username }}"
-#     password            : "{{ netapp_password }}"
-#     command             : [' security login create -user-or-group-name "{{ domain_name.split(".")[0] }}\\xsStealthAUDITProxy" -application ontapi -authentication-method domain -role FSAAPermission -vserver {{ svm_name | lower }}"]
-#     ontapi              : 32
-#     https               : true
-#     validate_certs      : false
-#   connection            : local
-
 - name: Add User 1 in Security Login - Security Model
   na_ontap_user:
     hostname            : "{{ cluster_name }}"
@@ -146,39 +135,52 @@
     validate_certs      : false
   connection            : local
 
-
-- name: Add member to CIFS local group
-  na_ontap_cifs_local_group_member:
+- name: Add members into local group Administrators per security model
+  na_ontap_command:
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    state               : present
-    vserver             : "{{ svm_name | lower }}"
-    group               : BUILTIN\Administrators
-    member              : 
-      - "{{svm_name | lower }}\\Administrator"
-      - "UPSTREAMACCTS\\P-UTEC-ESS-SAN-ADMIN.GG"
-      - "NA\\WindowsServer-Std.FullAdmin.UG"
-      - "{{ domain_name.split('.')[0] }}\\XO.STORAGE.ENG.LG"
-      - "NA\\CVNASBACKUP.UG"
-      - "NA\\CVNASTARGET.UG"
-      - "NA\\xsWFAMSP"
-      - "{{ domain_name.split('.')[0] }}\\DataFull.LG"
-    ontapi              : "{{ ontap_facts.ontap_version }}"
+    command             : ['cifs users-and-groups local-group add-members -vserver {{ svm_name | lower }} -group-name BUILTIN\Administrators -member-names UPSTREAMACCTS\P-UTEC-ESS-SAN-ADMIN.GG,NA\WindowsServer-Std.FullAdmin.UG,"{{ domain_name.split(".")[0] }}\\XO.STORAGE.ENG.LG","{{ domain_name.split(".")[0] }}\\DataFull.LG",NA\CVNASBACKUP.UG,NA\CVNASTARGET.UG,NA\xsWFAMSP']
+    ontapi              : 32
     https               : true
     validate_certs      : false
   connection            : local
 
-- name: Remove member from CIFS local group
-  na_ontap_cifs_local_group_member:
-    hostname            : "{{ cluster_name }}"
-    username            : "{{ netapp_username }}"
-    password            : "{{ netapp_password }}"
-    state               : absent
-    vserver             : "{{ svm_name | lower }}"
-    group               : BUILTIN\Administrators
-    member              : "{{ domain_name.split('.')[0] }}\\Domain Admins"
-    ontapi              : "{{ ontap_facts.ontap_version }}"
-    https               : true
-    validate_certs      : false
-  connection            : local
+
+## Module na_ontap_cifs_local_group_member is not available in here
+
+# - name: Add member to CIFS local group
+#   na_ontap_cifs_local_group_member:
+#     hostname            : "{{ cluster_name }}"
+#     username            : "{{ netapp_username }}"
+#     password            : "{{ netapp_password }}"
+#     state               : present
+#     vserver             : "{{ svm_name | lower }}"
+#     group               : BUILTIN\Administrators
+#     member              : 
+#       - "{{svm_name | lower }}\\Administrator"
+#       - "UPSTREAMACCTS\\P-UTEC-ESS-SAN-ADMIN.GG"
+#       - "NA\\WindowsServer-Std.FullAdmin.UG"
+#       - "{{ domain_name.split('.')[0] }}\\XO.STORAGE.ENG.LG"
+#       - "NA\\CVNASBACKUP.UG"
+#       - "NA\\CVNASTARGET.UG"
+#       - "NA\\xsWFAMSP"
+#       - "{{ domain_name.split('.')[0] }}\\DataFull.LG"
+#     ontapi              : "{{ ontap_facts.ontap_version }}"
+#     https               : true
+#     validate_certs      : false
+#   connection            : local
+
+# - name: Remove member from CIFS local group
+#   na_ontap_cifs_local_group_member:
+#     hostname            : "{{ cluster_name }}"
+#     username            : "{{ netapp_username }}"
+#     password            : "{{ netapp_password }}"
+#     state               : absent
+#     vserver             : "{{ svm_name | lower }}"
+#     group               : BUILTIN\Administrators
+#     member              : "{{ domain_name.split('.')[0] }}\\Domain Admins"
+#     ontapi              : "{{ ontap_facts.ontap_version }}"
+#     https               : true
+#     validate_certs      : false
+#   connection            : local
