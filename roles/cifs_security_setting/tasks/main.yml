@@ -157,6 +157,40 @@
     validate_certs      : false
   connection            : local
 
+- name: Add members into local group Backup Operators per security model
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [' cifs users-and-groups local-group add-members -vserver {{ svm_name | lower }} -group-name "BUILTIN\Backup Operators" -member-names "{{ domain_name.split(".")[0] }}\xsStealthAUDITProxy" ']
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Add members into local group Power Users per security model
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [' cifs users-and-groups local-group add-members -vserver {{ svm_name | lower }} -group-name "BUILTIN\Power Users" -member-names "{{ domain_name.split(".")[0] }}\xsStealthAUDITProxy" ']
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Remove members from local group Guest per security model
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [' cifs users-and-groups local-group remove-members -vserver {{ svm_name | lower }} -group-name BUILTIN\Guests -member-names "{{ domain_name.split(".")[0] }}\Domain Guests" ']
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+
 ## Module na_ontap_cifs_local_group_member is not available in here
 
 # - name: Add member to CIFS local group
