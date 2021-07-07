@@ -157,12 +157,12 @@
     group               : BUILTIN\Administrators
     member              : 
       - "{{svm_name | lower }}\\Administrator"
-      - UPSTREAMACCTS\P-UTEC-ESS-SAN-ADMIN.GG
-      - NA\WindowsServer-Std.FullAdmin.UG
+      - "UPSTREAMACCTS\\P-UTEC-ESS-SAN-ADMIN.GG"
+      - "NA\\WindowsServer-Std.FullAdmin.UG"
       - "{{ domain_name.split('.')[0] }}\\XO.STORAGE.ENG.LG"
-      - NA\CVNASBACKUP.UG
-      - NA\CVNASTARGET.UG
-      - NA\xsWFAMSP
+      - "NA\\CVNASBACKUP.UG"
+      - "NA\\CVNASTARGET.UG"
+      - "NA\\xsWFAMSP"
       - "{{ domain_name.split('.')[0] }}\\DataFull.LG"
     ontapi              : "{{ ontap_facts.ontap_version }}"
     https               : true
