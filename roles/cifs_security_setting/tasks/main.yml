@@ -146,14 +146,23 @@
     validate_certs      : false
   connection            : local
 
-# "{{ domain_name.split(".")[0] }}\\XO.STORAGE.ENG.LG","{{ domain_name.split(".")[0] }}\\DataFull.LG",
+- name: Add members into local group Administrators per security model
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [' cifs users-and-groups local-group add-members -vserver {{ svm_name | lower }} -group-name BUILTIN\Administrators -member-names "{{ domain_name.split(".")[0] }}\\XO.STORAGE.ENG.LG","{{ domain_name.split(".")[0] }}\\DataFull.LG" ']
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
 
 - name: Remove members from local group Administrators per security model
   na_ontap_command:
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : [' cifs users-and-groups local-group remove-members -vserver {{ svm_name | lower }} -group-name "BUILTIN\\Administrators" -member-names "{{ domain_name.split(".")[0] }}\\Domain Admins" ']
+    command             : [' cifs users-and-groups local-group remove-members -vserver {{ svm_name | lower }} -group-name BUILTIN\Administrators -member-names "{{ domain_name.split(".")[0] }}\\Domain Admins" ']
     ontapi              : 32
     https               : true
     validate_certs      : false
