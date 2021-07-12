@@ -1,24 +1,24 @@
 ﻿---
 # This code developed by Zura
 
-- name: Create CIFS SVM
-  na_ontap_svm:
-    hostname            : "{{ cluster_name }}"
-    username            : "{{ netapp_username }}"
-    password            : "{{ netapp_password }}"
-    state               : present
-    name                : "{{ svm_name | lower }}"
-    root_volume         : "{{ svm_name | lower }}_root"
-    root_volume_aggregate: "{{ aggr_name }}"
-    root_volume_security_style: ntfs
-    language            : C.UTF-8
-    snapshot_policy     : default
-    ipspace             : Default
-    comment             : CIFS File Share
-    ontapi              : 32
-    https               : true
-    validate_certs      : false
-  connection            : local
+# - name: Create CIFS SVM
+#   na_ontap_svm:
+#     hostname            : "{{ cluster_name }}"
+#     username            : "{{ netapp_username }}"
+#     password            : "{{ netapp_password }}"
+#     state               : present
+#     name                : "{{ svm_name | lower }}"
+#     root_volume         : "{{ svm_name | lower }}_root"
+#     root_volume_aggregate: "{{ aggr_name }}"
+#     root_volume_security_style: ntfs
+#     language            : C.UTF-8
+#     snapshot_policy     : default
+#     ipspace             : Default
+#     comment             : CIFS File Share
+#     ontapi              : 32
+#     https               : true
+#     validate_certs      : false
+#   connection            : local
 
 - name: Create CIFS SVM MGMT LIF using CLI
   na_ontap_command:
