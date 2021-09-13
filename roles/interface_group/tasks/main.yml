@@ -114,3 +114,58 @@
     https               : true
     validate_certs      : false
   connection            : local
+
+- name: Create Broadcast Domain for VLAN 1
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'network port broadcast-domain create -broadcast-domain {{ bd_vlan1 }} -mtu 1500 -ports {{ cluster_name | upper }}-01:a0a-{{ vlan1 }}, {{ cluster_name | upper }}-02:a0a-{{ vlan1 }}']
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Create Broadcast Domain for VLAN 2
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'network port broadcast-domain create -broadcast-domain {{ bd_vlan2 }} -mtu 1500 -ports {{ cluster_name | upper }}-01:a0a-{{ vlan2 }}, {{ cluster_name | upper }}-02:a0a-{{ vlan2 }}']
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Update LIF for Node B
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'network interface modify -vserver {{ cluster_name | upper }} -lif {{ cluster_name }}-02_mgmt -home-node {{ cluster_name | upper }}-02 -home-port a0a-{{ vlan1 }} -auto-revert true -failover-group {{ bd_vlan1 }} ']
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Update LIF for Node A
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'network interface modify -vserver {{ cluster_name | upper }} -lif {{ cluster_name }}-01_mgmt -home-node {{ cluster_name | upper }}-01 -home-port a0a-{{ vlan1 }} -auto-revert true -failover-group {{ bd_vlan1 }} ']
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Update LIF for cluster_mgmt
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'network interface modify -vserver {{ cluster_name | upper }} -lif cluster_mgmt -home-node {{ cluster_name | upper }}-01 -home-port a0a-{{ vlan1 }} -auto-revert true -failover-group {{ bd_vlan1 }} ']
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
