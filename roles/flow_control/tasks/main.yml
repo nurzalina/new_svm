@@ -1,0 +1,93 @@
+﻿---
+# This code developed by Rozi
+
+- name: checking flow control
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'row 0; net port show -speed-oper 10000 -fields flowcontrol-admin,speed-oper,speed-admin' ]   
+    # privilage           : 'admin'
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+  register              : flow_control_result
+
+- name:
+  debug:
+    msg: "{{ flow_control_result.msg }}"
+
+- name: set fact
+  set_fact:
+    output_port: "{{ output_port | default([]) + [ item ] }}" 
+  with_items: "{{ flow_control_result.msg.split('\n') }}"
+  when: 
+  - cluster_name.strip('.na.xom.com') | upper in item or cluster_name.strip('.ap.xom.com') | upper in item or cluster_name.strip('.upstreamaccts.xom.com') | upper in item or cluster_name.strip('.sa.xom.com') | upper in item or cluster_name.strip('.ups.xom.com') | upper in item or cluster_name.strip('.ea.xom.com') | upper in item or cluster_name.strip('.af.xom.com') | upper in item   #some without fqdn
+
+- name: make the data in structured format
+  set_fact:
+    structured_output_flow: "{{ structured_output_flow | default([]) + [{'hostname' : item.split()[0] , 'port' : item.split()[1] , 'speed' : item.split()[3] , 'duplex' : item.split()[4] }] }}"
+  with_items: "{{ output_port }}"
+
+- name: target port to be change
+  set_fact:
+    target_port: "{{ target_port | default([]) + [ item ] }}"
+  with_items: "{{ structured_output_flow }}" 
+  when: ( item.speed == "10000" and item.duplex == "full") or ( item.speed == "10000" and item.duplex == "none" )
+  when: ( item.speed == "1000" and item.duplex == "none" ) or ( item.speed == "1000" and item.duplex == "full" )
+
+- name: debug target port
+  debug:
+    msg: "{{ target_port }}"
+  ignore_errors: yes
+
+- name: debug target port cluster name
+  debug:
+    msg: "{{ item.hostname }}"
+  with_items: "{{ target_port }}"
+  ignore_errors: yes
+
+- name: debug target port name
+  debug:
+    msg: "{{ item.port }}"
+  with_items: "{{ target_port }}"
+  ignore_errors: yes
+
+- name: debug target duplex name
+  debug:
+    msg: "{{ item.duplex }}"
+  with_items: "{{ target_port }}"
+  ignore_errors: yes
+
+- name: modify changes for 10000 to none
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'network port modify -node {{ item.hostname }} -port {{ item.port }} -flowcontrol-admin none' ]   
+    # privilage           : 'admin'
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+  with_items: "{{ structured_output_flow }}"
+  when: ( item.speed == "10000" and item.duplex == "full") or ( item.speed == "10000" and item.duplex == "none" )
+  
+- name: modify changes for 1000 to full
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'network port modify -node {{ item.hostname }} -port {{ item.port }} -flowcontrol-admin full' ]   
+    # privilage           : 'admin'
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+  with_items: "{{ structured_output_flow }}"
+  when: ( item.speed == "1000" and item.duplex == "none" ) or ( item.speed == "1000" and item.duplex == "full" )
+  
+# 10000 = none
+# 1000 = full
+## script completed

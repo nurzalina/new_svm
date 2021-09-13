@@ -1,0 +1,66 @@
+﻿- name: Disk Option
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'disk option modify -autoassign off -node *' ]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Flexscale Option 1
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'node run -node * options flexscale.enable on' ]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+
+- name: Flexscale Option 2
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'node run -node * options flexscale.lopri_blocks off' ]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Flexscale Option 3
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'node run -node * options flexscale.readahead_blocks on' ]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: CDPD Option
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'node run -node * options cdpd.enable on' ]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: LLPD Option
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'node run -node * options lldp.enable on' ]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local

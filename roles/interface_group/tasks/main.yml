@@ -1,0 +1,116 @@
+﻿
+- name: broadcast domain remove ports from Default
+  na_ontap_broadcast_domain_ports:
+    state: absent
+    broadcast_domain: Default
+    ports: ["{{ nodea_name }}:{{ item }}", "{{ nodeb_name }}:{{ item }}"]
+    hostname: "{{ cluster_name }}"
+    username: "{{ netapp_username }}"
+    password: "{{ netapp_password }}"
+    ontapi: 32
+    https: true
+    validate_certs: false
+  connection: local
+  with_items:
+    - "{{ porta | default([]) }}"
+    - "{{ portb | default([]) }}"
+    - "{{ portc | default([]) }}"
+    - "{{ portd | default([]) }}"
+
+- name: Create ifgrp on Node A
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'network port ifgrp create -node {{ nodea_name }} -ifgrp a0a -mode multimode_lacp -distr-func port']
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Add port to ifgrp on Node A
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'network port ifgrp add-port -node {{ nodea_name }} -ifgrp a0a -port {{ item }}']
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+  with_items:
+    - "{{ porta | default([]) }}"
+    - "{{ portb | default([]) }}"
+    - "{{ portc | default([]) }}"
+    - "{{ portd | default([]) }}"
+
+- name: Create ifgrp on Node B
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'network port ifgrp create -node {{ nodeb_name }} -ifgrp a0a -mode multimode_lacp -distr-func port']
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Add port to ifgrp on Node B
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'network port ifgrp add-port -node {{ nodeb_name }} -ifgrp a0a -port {{ item }}']
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+  with_items:
+    - "{{ porta | default([]) }}"
+    - "{{ portb | default([]) }}"
+    - "{{ portc | default([]) }}"
+    - "{{ portd | default([]) }}"
+
+- name: Create VLAN Interface 1 on Node A
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'network port vlan create -node {{ nodea_name }} -vlan-name a0a-{{ vlan1 }}']
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Create VLAN Interface 1 on Node B
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'network port vlan create -node {{ nodeb_name }} -vlan-name a0a-{{ vlan1 }}']
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Create VLAN Interface 2 on Node A
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'network port vlan create -node {{ nodea_name }} -vlan-name a0a-{{ vlan2 }}']
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Create VLAN Interface 2 on Node B
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'network port vlan create -node {{ nodeb_name }} -vlan-name a0a-{{ vlan2 }}']
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
