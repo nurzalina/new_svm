@@ -22,7 +22,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : [ 'network port ifgrp create -node {{ nodea_name }} -ifgrp a0a -mode multimode_lacp -distr-func port']
+    command             : [ 'network port ifgrp create -node {{ cluster_name | upper }}-01 -ifgrp a0a -mode multimode_lacp -distr-func port']
     ontapi              : 32
     https               : true
     validate_certs      : false
@@ -33,7 +33,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : [ 'network port ifgrp add-port -node {{ nodea_name }} -ifgrp a0a -port {{ item }}']
+    command             : [ 'network port ifgrp add-port -node {{ cluster_name | upper }}-01 -ifgrp a0a -port {{ item }}']
     ontapi              : 32
     https               : true
     validate_certs      : false
@@ -49,7 +49,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : [ 'network port ifgrp create -node {{ nodeb_name }} -ifgrp a0a -mode multimode_lacp -distr-func port']
+    command             : [ 'network port ifgrp create -node {{ cluster_name | upper }}-02 -ifgrp a0a -mode multimode_lacp -distr-func port']
     ontapi              : 32
     https               : true
     validate_certs      : false
@@ -60,7 +60,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : [ 'network port ifgrp add-port -node {{ nodeb_name }} -ifgrp a0a -port {{ item }}']
+    command             : [ 'network port ifgrp add-port -node {{ cluster_name | upper }}-02 -ifgrp a0a -port {{ item }}']
     ontapi              : 32
     https               : true
     validate_certs      : false
@@ -76,7 +76,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : [ 'network port vlan create -node {{ nodea_name }} -vlan-name a0a-{{ vlan1 }}']
+    command             : [ 'network port vlan create -node {{ cluster_name | upper }}-01 -vlan-name a0a-{{ vlan1 }}']
     ontapi              : 32
     https               : true
     validate_certs      : false
@@ -87,7 +87,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : [ 'network port vlan create -node {{ nodeb_name }} -vlan-name a0a-{{ vlan1 }}']
+    command             : [ 'network port vlan create -node {{ cluster_name | upper }}-02 -vlan-name a0a-{{ vlan1 }}']
     ontapi              : 32
     https               : true
     validate_certs      : false
@@ -98,7 +98,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : [ 'network port vlan create -node {{ nodea_name }} -vlan-name a0a-{{ vlan2 }}']
+    command             : [ 'network port vlan create -node {{ cluster_name | upper }}-01 -vlan-name a0a-{{ vlan2 }}']
     ontapi              : 32
     https               : true
     validate_certs      : false
@@ -109,7 +109,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : [ 'network port vlan create -node {{ nodeb_name }} -vlan-name a0a-{{ vlan2 }}']
+    command             : [ 'network port vlan create -node {{ cluster_name | upper }}-02 -vlan-name a0a-{{ vlan2 }}']
     ontapi              : 32
     https               : true
     validate_certs      : false
