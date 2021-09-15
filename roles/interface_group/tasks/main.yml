@@ -3,7 +3,7 @@
   na_ontap_broadcast_domain_ports:
     state: absent
     broadcast_domain: Default
-    ports: ["{{ nodea_name }}:{{ item }}", "{{ nodeb_name }}:{{ item }}"]
+    ports: ["{{ cluster_name }}-01:{{ item }}", "{{ cluster_name }}-02:{{ item }}"]
     hostname: "{{ cluster_name }}"
     username: "{{ netapp_username }}"
     password: "{{ netapp_password }}"
