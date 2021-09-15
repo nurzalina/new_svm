@@ -182,3 +182,14 @@
     https               : true
     validate_certs      : false
   connection            : local
+
+- name: Domain tunnel
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ "security login domain-tunnel create -vserver {{ cluster_name }}adm" ] 
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local

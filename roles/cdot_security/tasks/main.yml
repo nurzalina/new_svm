@@ -1,0 +1,206 @@
+﻿
+- name: Add P-UTEC in Security Login - Security Model
+  na_ontap_user:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    state               : present
+    name                : "UPSTREAMACCTS\\P-UTEC-ESS-SAN-ADMIN.GG"
+    applications        : [ ontapi, ssh, http ]
+    authentication_method: domain
+    role_name           : admin
+    vserver             : "{{ cluster_name | upper }}"
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Add XO Storage in Security Login - Security Model
+  na_ontap_user:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    state               : present
+    name                : "{{ domain_name.split('.')[0] | upper }}\\XO.STORAGE.ENG.LG"
+    applications        : [ ontapi, ssh, http ]
+    authentication_method: domain
+    role_name           : admin
+    vserver             : "{{ cluster_name | upper }}"
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Add OCI ID in Security Login - Security Model
+  na_ontap_user:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    state               : present
+    name                : "NA\\xsOnCommandInsight"
+    applications        : ontapi
+    authentication_method: domain
+    role_name           : readonly
+    vserver             : "{{ cluster_name | upper }}"
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Add TCP-OCI in Security Login - Security Model
+  na_ontap_user:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    state               : present
+    name                : "NA\\xstcpoci"
+    applications        : ssh
+    authentication_method: domain
+    role_name           : readonly
+    vserver             : "{{ cluster_name | upper }}"
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Add Splunk ID in Security Login - Security Model
+  na_ontap_user:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    state               : present
+    name                : "UPSTREAMACCTS\\xsSplunk-NetAppID"
+    applications        : ontapi
+    authentication_method: domain
+    role_name           : readonly
+    vserver             : "{{ cluster_name | upper }}"
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Add User 1 in Security Login - Security Model
+  na_ontap_user:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    state               : present
+    name                : "{{ domain_name.split('.')[0] | upper }}\\xsStealthAUDITProxy"
+    applications        : ontapi
+    authentication_method: domain
+    role_name           : FSAAPermission
+    vserver             : "{{ svm_name | lower }}"
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Add User 2 in Security Login - Security Model
+  na_ontap_user:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    state               : present
+    name                : "NA\\xsCVbackup"
+    applications        : ontapi
+    authentication_method: domain
+    role_name           : vsadmin
+    vserver             : "{{ svm_name | lower }}"
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Add members into local group Administrators per security model
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [' cifs users-and-groups local-group add-members -vserver {{ svm_name | lower }} -group-name BUILTIN\Administrators -member-names UPSTREAMACCTS\P-UTEC-ESS-SAN-ADMIN.GG,NA\WindowsServer-Std.FullAdmin.UG,NA\CVNASBACKUP.UG,NA\CVNASTARGET.UG,"{{ domain_name.split(".")[0] }}\XO.STORAGE.ENG.LG","{{ domain_name.split(".")[0] }}\DataFull.LG",NA\xsWFAMSP ']
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Remove members from local group Administrators per security model
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [' cifs users-and-groups local-group remove-members -vserver {{ svm_name | lower }} -group-name BUILTIN\Administrators -member-names "{{ domain_name.split(".")[0] }}\Domain Admins" ']
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Add members into local group Backup Operators per security model
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [' cifs users-and-groups local-group add-members -vserver {{ svm_name | lower }} -group-name "BUILTIN\Backup Operators" -member-names "{{ domain_name.split(".")[0] }}\xsStealthAUDITProxy" ']
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Add members into local group Power Users per security model
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [' cifs users-and-groups local-group add-members -vserver {{ svm_name | lower }} -group-name "BUILTIN\Power Users" -member-names "{{ domain_name.split(".")[0] }}\xsStealthAUDITProxy" ']
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Remove members from local group Guest per security model
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [' cifs users-and-groups local-group remove-members -vserver {{ svm_name | lower }} -group-name BUILTIN\Guests -member-names "{{ domain_name.split(".")[0] }}\Domain Guests" ']
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+
+## Module na_ontap_cifs_local_group_member is not available in here
+
+# - name: Add member to CIFS local group
+#   na_ontap_cifs_local_group_member:
+#     hostname            : "{{ cluster_name }}"
+#     username            : "{{ netapp_username }}"
+#     password            : "{{ netapp_password }}"
+#     state               : present
+#     vserver             : "{{ svm_name | lower }}"
+#     group               : BUILTIN\Administrators
+#     member              : 
+#       - "{{svm_name | lower }}\\Administrator"
+#       - "UPSTREAMACCTS\\P-UTEC-ESS-SAN-ADMIN.GG"
+#       - "NA\\WindowsServer-Std.FullAdmin.UG"
+#       - "{{ domain_name.split('.')[0] }}\\XO.STORAGE.ENG.LG"
+#       - "NA\\CVNASBACKUP.UG"
+#       - "NA\\CVNASTARGET.UG"
+#       - "NA\\xsWFAMSP"
+#       - "{{ domain_name.split('.')[0] }}\\DataFull.LG"
+#     ontapi              : "{{ ontap_facts.ontap_version }}"
+#     https               : true
+#     validate_certs      : false
+#   connection            : local
+
+# - name: Remove member from CIFS local group
+#   na_ontap_cifs_local_group_member:
+#     hostname            : "{{ cluster_name }}"
+#     username            : "{{ netapp_username }}"
+#     password            : "{{ netapp_password }}"
+#     state               : absent
+#     vserver             : "{{ svm_name | lower }}"
+#     group               : BUILTIN\Administrators
+#     member              : "{{ domain_name.split('.')[0] }}\\Domain Admins"
+#     ontapi              : "{{ ontap_facts.ontap_version }}"
+#     https               : true
+#     validate_certs      : false
+#   connection            : local

@@ -20,7 +20,6 @@
     validate_certs      : false
   connection            : local
 
-
 - name: Flexscale Option 2
   na_ontap_command:
     hostname            : "{{ cluster_name }}"
@@ -64,3 +63,148 @@
     https               : true
     validate_certs      : false
   connection            : local
+
+- name: Fwd events Option 1
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'event destination create -name auth -syslog esssal001.ups.xom.com -syslog-facility local6' ]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Fwd events Option 2
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'event route add-destinations -messagename login.auth.loginDenied -destinations auth' ]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Fwd events Option 3
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'event route add-destinations -messagename sshd.auth.loginDenied -destinations auth' ]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: SNMP Option
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'system snmp community add -community-name stoRage2005ro -type ro' ]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: SNMP Trap Host Option 1
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'system snmp traphost add -peer-address {{ ocm_svr }}' ]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: SNMP Trap Host Option 2
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'system snmp traphost add -peer-address 10.216.169.4' ]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: SNMP Trap Host Option 3
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'system snmp traphost add -peer-address 10.215.169.15' ]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: SNMP Trap Host Option 4
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'system snmp traphost add -peer-address 10.215.169.16' ]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: SNMP Trap Host Option 5
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'system snmp traphost add -peer-address 10.215.169.17' ]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Enable autosupport on Node A
+  na_ontap_autosupport:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    node_name: "{{ cluster_name | upper }}-01"
+    transport: https
+    noteto: GSC-EMIT-STORAGE-ALERTS@exxonmobil.com
+    mail_hosts: smtp.na.xom.com
+    support: yes
+    from_address: "{{ cluster_name | upper }}-01@exxonmobil.com"
+    partner_addresses: autosupport@netapp.com
+    to_addresses: support@netapp.com
+    #proxy_url: "{{  }}"
+    https: true
+    validate_certs: false
+  connection: local
+
+- name: Enable autosupport on Node B
+  na_ontap_autosupport:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    node_name: "{{ cluster_name | upper }}-02"
+    transport: https
+    noteto: GSC-EMIT-STORAGE-ALERTS@exxonmobil.com
+    mail_hosts: smtp.na.xom.com
+    support: yes
+    from_address: "{{ cluster_name | upper }}-02@exxonmobil.com"
+    partner_addresses: autosupport@netapp.com
+    to_addresses: support@netapp.com
+    #proxy_url: "{{  }}"
+    https: true
+    validate_certs: false
+  connection: local
+
+- name: Invoke ASUP Test for all nodes
+  na_ontap_command:
+    command: "set,adv,-confirmations,off,;,system,autosupport,invoke,-node,*,-type,test,-message,Testing_ASUP_Setup"
+    hostname: "{{ cluster_name }}"
+    username: "{{ netapp_username }}"
+    password: "{{ netapp_password }}"
+    https: true
+    validate_certs: false
+  connection: local
