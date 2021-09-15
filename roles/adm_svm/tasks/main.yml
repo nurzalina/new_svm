@@ -12,12 +12,23 @@
     validate_certs      : false
   connection            : local
 
-- name: Create ICL LIF using CLI
+- name: Create ICL LIF Node A using CLI
   na_ontap_command:
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
     command             : ["network interface create -vserver {{ cluster_name | upper }} -lif {{ cluster_name | lower }}-01icl1 -role intercluster -home-node {{ cluster_name | upper }}-01 -home-port a0a-{{ vlan1 }} -address {{ icl_a_ip}} -netmask {{ vlan1_netmask }} -status-admin up -failover-policy local-only -firewall-policy intercluster -auto-revert false -failover-group Default"]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Create ICL LIF Node B using CLI
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : ["network interface create -vserver {{ cluster_name | upper }} -lif {{ cluster_name | lower }}-02icl1 -role intercluster -home-node {{ cluster_name | upper }}-02 -home-port a0a-{{ vlan1 }} -address {{ icl_b_ip}} -netmask {{ vlan1_netmask }} -status-admin up -failover-policy local-only -firewall-policy intercluster -auto-revert false -failover-group Default"]
     ontapi              : 32
     https               : true
     validate_certs      : false
@@ -31,7 +42,7 @@
     state               : present
     name                : "{{ cluster_name | lower }}adm"
     root_volume         : "{{ cluster_name | lower }}adm_root"
-    root_volume_aggregate: "{{ aggr_name }}"
+    root_volume_aggregate: "{{ aggr_a_data1 }}"
     root_volume_security_style: ntfs
     language            : C.UTF-8
     snapshot_policy     : default
