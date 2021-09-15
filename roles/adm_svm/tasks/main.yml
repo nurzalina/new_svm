@@ -1,0 +1,184 @@
+﻿---
+
+- name: Create NTP server
+  na_ontap_ntp:
+    state               : present
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    servername          : "131.126.135.7","131.126.135.6","198.43.1.15","198.43.1.14"
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Create ICL LIF using CLI
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : ["network interface create -vserver {{ cluster_name | upper }} -lif {{ cluster_name | lower }}-01icl1 -role intercluster -home-node {{ cluster_name | upper }}-01 -home-port a0a-{{ vlan1 }} -address {{ icl_a_ip}} -netmask {{ vlan1_netmask }} -status-admin up -failover-policy local-only -firewall-policy intercluster -auto-revert false -failover-group Default"]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Create CIFS SVM
+  na_ontap_svm:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    state               : present
+    name                : "{{ cluster_name | lower }}adm"
+    root_volume         : "{{ cluster_name | lower }}adm_root"
+    root_volume_aggregate: "{{ aggr_name }}"
+    root_volume_security_style: ntfs
+    language            : C.UTF-8
+    snapshot_policy     : default
+    ipspace             : Default
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Create ADM SVM MGMT LIF using CLI
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : ["network interface create -vserver {{ cluster_name | lower }}adm -lif {{ cluster_name | lower }}adm_mgmt -role data -data-protocol none -home-node {{ cluster_name }}-01 -home-port a0a-{{ vlan1 }} -address {{ svmadm_ip_m }} -netmask {{ vlan1_netmask }} -status-admin up -failover-policy broadcast-domain-wide -firewall-policy mgmt -auto-revert true -failover-group {{ bd_vlan1 }}"]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Configure ADM SVM Data LIF using CLI
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ "network interface create -vserver {{ cluster_name | lower }}adm -lif {{ cluster_name | lower }}adm_auth_lif1 -role data -data-protocol cifs -address {{ svmadm_ip }} -netmask {{ vlan1_netmask }} -home-port a0a-{{ vlan1 }} -home-node {{ cluster_name }}-01 -auto-revert true -failover-policy broadcast-domain-wide -firewall-policy data -failover-group {{ bd_vlan1 }} -status-admin up " ]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Configure route
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ "route create -vserver {{ cluster_name | lower }}adm -destination 0.0.0.0/0 -gateway {{ vlan1_gateway }}" ]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Configure DNS
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ "dns create -vserver {{ cluster_name | lower }}adm -domains na.xom.com,upstreamaccts.xom.com,ea.xom.com,ap.xom.com,sa.xom.com -name-servers 10.1.4.11,10.1.4.12 -state enabled " ]
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+
+- name: Create cifs_server for ADM SVM
+  na_ontap_cifs_server:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    state               : present
+    cifs_server_name    : "{{ cluster_name | upper }}ADM"
+    vserver             : "{{ cluster_name | lower }}adm"
+    service_state       : started
+    domain              : "{{ domain_name }}"
+    ou                  : OU=NTAP,OU="Standard Servers"
+    admin_user_name     : "{{ domain_login }}"
+    admin_password      : "{{ domain_pwd }}"
+    force               : yes
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+
+- name: Create FlexVol on Node A
+  na_ontap_volume:
+    state: present
+    vserver: "{{ cluster_name }}adm"
+    name: "{{ cluster_name }}adm_root_ls01"
+    aggregate_name: "{{ aggr_a_data1 }}"
+    size: 1
+    size_unit: gb
+    type: DP
+    space_guarantee: none
+    policy: default
+    wait_for_completion: True
+    comment: ansible created LS volume
+    hostname: "{{ cluster_name }}"
+    username: "{{ netapp_username }}"
+    password: "{{ netapp_password }}"
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+
+- name: Create FlexVol on Node B
+  na_ontap_volume:
+    state: present
+    vserver: "{{ cluster_name }}adm"
+    name: "{{ cluster_name }}adm_root_ls02"
+    aggregate_name: "{{ aggr_b_data1 }}"
+    size: 1
+    size_unit: gb
+    type: DP
+    space_guarantee: none
+    policy: default
+    wait_for_completion: True
+    comment: ansible created LS volume
+    hostname: "{{ cluster_name }}"
+    username: "{{ netapp_username }}"
+    password: "{{ netapp_password }}"
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+
+- name: Create snapmirror for LS A
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ "snapmirror create -source-path {{ cluster_name }}adm:{{ cluster_name }}adm_root -destination-path {{ cluster_name }}adm:{{ cluster_name }}adm_root_ls01 -type LS -schedule 5min" ] 
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Create snapmirror for LS B
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ "snapmirror create -source-path {{ cluster_name }}adm:{{ cluster_name }}adm_root -destination-path {{ cluster_name }}adm:{{ cluster_name }}adm_root_ls02 -type LS -schedule 5min" ] 
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Initialize snapmirror
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ "snapmirror initialize-ls-set -source-path {{ cluster_name }}adm:{{ cluster_name }}adm_root" ] 
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local

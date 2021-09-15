@@ -20,3 +20,4 @@
     - cdot_setting
     # - flow_control
     - interface_group
+    - adm_svm
