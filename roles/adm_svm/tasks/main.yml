@@ -21,7 +21,7 @@
     validate_certs      : false
   connection            : local
 
-  - name: NTP using CLI
+- name: NTP using CLI
   na_ontap_command:
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
@@ -32,7 +32,7 @@
     validate_certs      : false
   connection            : local
 
-  - name: NTP using CLI
+- name: NTP using CLI
   na_ontap_command:
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
