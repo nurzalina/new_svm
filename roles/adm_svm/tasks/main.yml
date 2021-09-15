@@ -48,7 +48,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : ["network interface create -vserver {{ cluster_name | upper }} -lif {{ cluster_name | lower }}-01icl1 -role intercluster -home-node {{ cluster_name | upper }}-01 -home-port a0a-{{ vlan1 }} -address {{ icl_a_ip}} -netmask {{ vlan1_netmask }} -status-admin up -failover-policy local-only -firewall-policy intercluster -auto-revert false -failover-group Default"]
+    command             : ["network interface create -vserver {{ cluster_name | upper }} -lif {{ cluster_name | lower }}-01icl1 -role intercluster -home-node {{ cluster_name | upper }}-01 -home-port a0a-{{ vlan1 }} -address {{ icl_a_ip}} -netmask {{ vlan1_netmask }} -status-admin up -failover-policy local-only -firewall-policy intercluster -auto-revert false -failover-group {{ bd_vlan1 }}"]
     ontapi              : 32
     https               : true
     validate_certs      : false
@@ -59,7 +59,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : ["network interface create -vserver {{ cluster_name | upper }} -lif {{ cluster_name | lower }}-02icl1 -role intercluster -home-node {{ cluster_name | upper }}-02 -home-port a0a-{{ vlan1 }} -address {{ icl_b_ip}} -netmask {{ vlan1_netmask }} -status-admin up -failover-policy local-only -firewall-policy intercluster -auto-revert false -failover-group Default"]
+    command             : ["network interface create -vserver {{ cluster_name | upper }} -lif {{ cluster_name | lower }}-02icl1 -role intercluster -home-node {{ cluster_name | upper }}-02 -home-port a0a-{{ vlan1 }} -address {{ icl_b_ip}} -netmask {{ vlan1_netmask }} -status-admin up -failover-policy local-only -firewall-policy intercluster -auto-revert false -failover-group {{ bd_vlan1 }}"]
     ontapi              : 32
     https               : true
     validate_certs      : false
