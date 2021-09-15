@@ -1,5 +1,4 @@
-﻿---
-
+﻿
 - name: NTP using CLI
   na_ontap_command:
     hostname            : "{{ cluster_name }}"
