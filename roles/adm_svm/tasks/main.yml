@@ -151,8 +151,8 @@
 - name: Create FlexVol on Node A
   na_ontap_volume:
     state: present
-    vserver: "{{ cluster_name }}adm"
-    name: "{{ cluster_name }}adm_root_ls01"
+    vserver: "{{ cluster_name | lower }}adm"
+    name: "{{ cluster_name | lower }}adm_root_ls01"
     aggregate_name: "{{ aggr_a_data1 }}"
     size: 1
     size_unit: gb
@@ -173,8 +173,8 @@
 - name: Create FlexVol on Node B
   na_ontap_volume:
     state: present
-    vserver: "{{ cluster_name }}adm"
-    name: "{{ cluster_name }}adm_root_ls02"
+    vserver: "{{ cluster_name | lower }}adm"
+    name: "{{ cluster_name | lower }}adm_root_ls02"
     aggregate_name: "{{ aggr_b_data1 }}"
     size: 1
     size_unit: gb
@@ -197,7 +197,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : [ "snapmirror create -source-path {{ cluster_name }}adm:{{ cluster_name }}adm_root -destination-path {{ cluster_name }}adm:{{ cluster_name }}adm_root_ls01 -type LS -schedule 5min" ] 
+    command             : [ "snapmirror create -source-path {{ cluster_name | lower }}adm:{{ cluster_name | lower }}adm_root -destination-path {{ cluster_name | lower }}adm:{{ cluster_name | lower }}adm_root_ls01 -type LS -schedule 5min" ] 
     ontapi              : 32
     https               : true
     validate_certs      : false
@@ -208,7 +208,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : [ "snapmirror create -source-path {{ cluster_name }}adm:{{ cluster_name }}adm_root -destination-path {{ cluster_name }}adm:{{ cluster_name }}adm_root_ls02 -type LS -schedule 5min" ] 
+    command             : [ "snapmirror create -source-path {{ cluster_name | lower }}adm:{{ cluster_name | lower }}adm_root -destination-path {{ cluster_name | lower }}adm:{{ cluster_name | lower }}adm_root_ls02 -type LS -schedule 5min" ] 
     ontapi              : 32
     https               : true
     validate_certs      : false
@@ -219,7 +219,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : [ "snapmirror initialize-ls-set -source-path {{ cluster_name }}adm:{{ cluster_name }}adm_root" ] 
+    command             : [ "snapmirror initialize-ls-set -source-path {{ cluster_name | lower }}adm:{{ cluster_name | lower }}adm_root" ] 
     ontapi              : 32
     https               : true
     validate_certs      : false
@@ -230,7 +230,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : [ "security login domain-tunnel create -vserver {{ cluster_name }}adm" ] 
+    command             : [ "security login domain-tunnel create -vserver {{ cluster_name | lower }}adm" ] 
     ontapi              : 32
     https               : true
     validate_certs      : false
