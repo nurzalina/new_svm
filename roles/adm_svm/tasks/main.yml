@@ -6,7 +6,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    servername          : "131.126.135.7","131.126.135.6","198.43.1.15","198.43.1.14"
+    servername          : [ "131.126.135.7","131.126.135.6","198.43.1.15","198.43.1.14" ]
     ontapi              : 32
     https               : true
     validate_certs      : false
