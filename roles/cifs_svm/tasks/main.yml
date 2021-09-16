@@ -1,6 +1,39 @@
 ﻿---
 # This code developed by Zura
 
+- name: Create New VLAN Interface 2 on Node A
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'network port vlan create -node {{ cluster_name | upper }}-01 -vlan-name a0a-{{ vlan2 }}']
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Create New VLAN Interface 2 on Node B
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'network port vlan create -node {{ cluster_name | upper }}-02 -vlan-name a0a-{{ vlan2 }}']
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Create Broadcast Domain for VLAN 2
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'network port broadcast-domain create -broadcast-domain {{ bd_vlan2 }} -mtu 1500 -ports {{ cluster_name | upper }}-01:a0a-{{ vlan2 }}, {{ cluster_name | upper }}-02:a0a-{{ vlan2 }}']
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
 - name: Create CIFS SVM
   na_ontap_svm:
     hostname            : "{{ cluster_name }}"
@@ -9,12 +42,12 @@
     state               : present
     name                : "{{ svm_name | lower }}"
     root_volume         : "{{ svm_name | lower }}_root"
-    root_volume_aggregate: "{{ aggr_name }}"
+    root_volume_aggregate: "{{ aggr_a_data1 }}"
     root_volume_security_style: ntfs
     language            : C.UTF-8
     snapshot_policy     : default
     ipspace             : Default
-    comment             : CIFS File Share
+    comment             : "CIFS File Share"
     ontapi              : 32
     https               : true
     validate_certs      : false
@@ -25,7 +58,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : ["network interface create -vserver {{ svm_name | lower }} -lif {{ svm_name | lower }}_mgmt -role data -data-protocol none -home-node {{ cluster_name }}-01 -home-port a0a-{{ vlan }} -address {{ svm_ip }} -netmask {{ svm_netmask }} -status-admin up -failover-policy broadcast-domain-wide -firewall-policy mgmt -auto-revert true -failover-group {{ failover_group }}"]
+    command             : ["network interface create -vserver {{ svm_name | lower }} -lif {{ svm_name | lower }}_mgmt -role data -data-protocol none -home-node {{ cluster_name | upper }}-01 -home-port a0a-{{ vlan2 }} -address {{ svm_ip_m }} -netmask {{ svm_netmask }} -status-admin up -failover-policy broadcast-domain-wide -firewall-policy mgmt -auto-revert true -failover-group {{ failover_group }}"]
     ontapi              : 32
     https               : true
     validate_certs      : false
@@ -36,7 +69,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : [ "network interface create -vserver {{ svm_name | lower }} -lif {{ svm_name | lower }}_cifs_lif01 -role data -data-protocol cifs -address {{ svm_lif1_ip }} -netmask {{ svm_netmask }} -home-port a0a-{{ vlan }} -home-node {{ cluster_name }}-01 -auto-revert true -failover-policy broadcast-domain-wide -firewall-policy data -failover-group {{ failover_group }} -status-admin up " ]
+    command             : [ "network interface create -vserver {{ svm_name | lower }} -lif {{ svm_name | lower }}_cifs_lif01 -role data -data-protocol cifs -address {{ svm_lif1_ip }} -netmask {{ svm_netmask }} -home-port a0a-{{ vlan2 }} -home-node {{ cluster_name | upper }}-01 -auto-revert true -failover-policy broadcast-domain-wide -firewall-policy data -failover-group {{ failover_group }} -status-admin up " ]
     ontapi              : 32
     https               : true
     validate_certs      : false
@@ -52,142 +85,3 @@
     https               : true
     validate_certs      : false
   connection            : local
-
-# - name: Create CIFS SVM MGMT LIF
-#   na_ontap_interface:
-#     hostname            : "{{ cluster_name }}"
-#     username            : "{{ netapp_username }}"
-#     password            : "{{ netapp_password }}"
-#     state               : present
-#     vserver             : "{{ svm_name | lower }}"
-#     interface_name      : "{{ svm_name | lower }}_mgmt"
-#     home_port           : "a0a-{{ vlan }}"
-#     home_node           : "{{ cluster_name | upper }}-01"
-#     role                : data
-#     protocols           : none
-#     address             : "{{ svm_ip }}"
-#     netmask             : "{{ svm_netmask }}"
-#     admin_status        : up
-#     failover_policy     : broadcast-domain-wide
-#     firewall_policy     : mgmt
-#     is_auto_revert      : true
-#     failover_group      : "{{ failover_group }}"
-#     ontapi              : 32
-#     https               : true
-#     validate_certs      : false
-#   connection            : local
-
-# - name: Create CIFS SVM node A LIF
-#   na_ontap_interface:
-#     hostname            : "{{ cluster_name }}"
-#     username            : "{{ netapp_username }}"
-#     password            : "{{ netapp_password }}"
-#     state               : present
-#     vserver             : "{{ svm_name | lower }}"
-#     interface_name      : "{{ svm_name | lower }}_cifs_lif01"
-#     role                : data
-#     protocols           : cifs
-#     home_node           : "{{ cluster_name | upper }}-01"
-#     home_port           : "a0a-{{ vlan }}"
-#     address             : "{{ svm_lif1_ip }}"
-#     netmask             : "{{ svm_netmask }}"
-#     admin_status        : up
-#     failover_policy     : broadcast-domain-wide
-#     firewall_policy     : data
-#     is_auto_revert      : true
-#     failover_group      : "{{ failover_group }}"
-#     ontapi              : 32
-#     https               : true
-#     validate_certs      : false
-#   connection            : local
-
-# - name: Create CIFS SVM node B LIF
-#   na_ontap_interface:
-#     hostname            : "{{ cluster_name }}"
-#     username            : "{{ netapp_username }}"
-#     password            : "{{ netapp_password }}"
-#     state               : present
-#     vserver             : "{{ svm_name | lower }}"
-#     interface_name      : "{{ svm_name | lower }}_cifs_lif02"
-#     role                : data
-#     protocols           : cifs
-#     home_node           : "{{ cluster_name | upper }}-02"
-#     home_port           : "a0a-{{ vlan }}"
-#     address             : "{{ svm_lif2_ip }}"
-#     netmask             : "{{ svm_netmask }}"
-#     admin_status        : up
-#     failover_policy     : broadcast-domain-wide
-#     firewall_policy     : data
-#     is_auto_revert      : true
-#     failover_group      : "{{ failover_group }}"
-#     ontapi              : 32
-#     https               : true
-#     validate_certs      : false
-#   connection            : local
-
-##################################################################################
-# - name: Create VLAN for SVM
-#   na_ontap_command:
-#     hostname            : "{{ cluster_name }}"
-#     username            : "{{ netapp_username }}"
-#     password            : "{{ netapp_password }}"
-#     command             : ["network port vlan create -node {{ nodea_name | upper }} -vlan-name a0a-{{ vlan_number }}"]
-#     ontapi              : 32
-#     https               : true
-#     validate_certs      : false
-#   connection            : local
-
-# - name: Assign VLAN IFGRP to Broadcast Domain
-#   na_ontap_command:
-#     hostname            : "{{ cluster_name }}"
-#     username            : "{{ netapp_username }}"
-#     password            : "{{ netapp_password }}"
-#     command             : ["network port broadcast-domain add-ports -broadcast-domain {{ failover_group }} -ports {{ nodea_name | upper }}:a0a-{{ vlan_number }}"]
-#     ontapi              : 32
-#     https               : true
-#     validate_certs      : false
-#   connection            : local
-
-# - name: Configure CIFS SVM node A LIF
-#   na_ontap_command:
-#     hostname            : "{{ cluster_name }}"
-#     username            : "{{ netapp_username }}"
-#     password            : "{{ netapp_password }}"
-#     command             : ["network interface create -vserver {{ svm1_name | lower }} -lif {{ svm1_name | lower }}_cifs_lif{{ nodea_name.split('-')[1] | lower }} -role data -data-protocol cifs -address {{ lif_svm1a_address }} -netmask {{ lif_netmask }} -home-port a0a-{{ vlan_number }} -home-node {{ nodea_name | upper }} -auto-revert true -failover-policy broadcast-domain-wide -firewall-policy data -failover-group {{ failover_group }} -status-admin up "]
-#     ontapi              : 32
-#     https               : true
-#     validate_certs      : false
-#   connection            : local
-
-# - name: Create VLAN for SVM
-#   na_ontap_command:
-#     hostname            : "{{ cluster_name }}"
-#     username            : "{{ netapp_username }}"
-#     password            : "{{ netapp_password }}"
-#     command             : ["network port vlan create -node {{ nodeb_name | upper }} -vlan-name a0a-{{ vlan_number }}"]
-#     ontapi              : 32
-#     https               : true
-#     validate_certs      : false
-#   connection            : local
-
-# - name: Assign VLAN IFGRP to Broadcast Domain
-#   na_ontap_command:
-#     hostname            : "{{ cluster_name }}"
-#     username            : "{{ netapp_username }}"
-#     password            : "{{ netapp_password }}"
-#     command             : ["network port broadcast-domain add-ports -broadcast-domain {{ failover_group }} -ports {{ nodeb_name | upper }}:a0a-{{ vlan_number }}"]
-#     ontapi              : 32
-#     https               : true
-#     validate_certs      : false
-#   connection            : local
-
-# - name: Configure CIFS SVM node B LIF
-#   na_ontap_command:
-#     hostname            : "{{ cluster_name }}"
-#     username            : "{{ netapp_username }}"
-#     password            : "{{ netapp_password }}"
-#     command             : ["network interface create -vserver {{ svm1_name | lower }} -lif {{ svm1_name | lower }}_cifs_lif{{ nodeb_name.split('-')[1] | lower }} -role data -data-protocol cifs -address {{ lif_svm1b_address }} -netmask {{ lif_netmask }} -home-port a0a-{{ vlan_number }} -home-node {{ nodeb_name | upper }} -auto-revert true -failover-policy broadcast-domain-wide -firewall-policy data -failover-group {{ failover_group }} -status-admin up "]
-#     ontapi              : 32
-#     https               : true
-#     validate_certs      : false
-#   connection            : local

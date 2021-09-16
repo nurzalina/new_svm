@@ -1,31 +1,6 @@
 ﻿---
 # This code developed by Zalina
 
-# - name: Configure SVM default route
-#   na_ontap_command:
-#     hostname            : "{{ cluster_name }}"
-#     username            : "{{ netapp_username }}"
-#     password            : "{{ netapp_password }}"
-#     command             : [ "route create -vserver {{ svm_name | lower }} -destination 0.0.0.0/0 -gateway {{ svm_gateway }} -metric 20" ]
-#     ontapi              : 32
-#     https               : true
-#     validate_certs      : false
-#   connection            : local
-
-  
-# - name: Configure SVM DNS table
-#   na_ontap_command:
-#     hostname            : "{{ cluster_name }}"
-#     username            : "{{ netapp_username }}"
-#     password            : "{{ netapp_password }}"
-#     command             : [ "dns create -vserver {{ svm_name | lower }} -domains na.xom.com,upstreamaccts.xom.com,ups.xom.com,ap.xom.com,ea.xom.com -timeout 2 -attempts 1 -name-servers 10.1.4.11,10.1.4.12 -state enabled" ]
-#     ontapi              : 32
-#     https               : true
-#     validate_certs      : false
-#   connection            : local
-
-# Below is using ansible module
-
 - name: Create CIFS SVM default route
   na_ontap_net_routes:
     state               : present
