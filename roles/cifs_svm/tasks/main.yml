@@ -80,7 +80,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : [ "network interface create -vserver {{ svm_name | lower }} -lif {{ svm_name | lower }}_cifs_lif02 -role data -data-protocol cifs -address {{ svm_lif2_ip }} -netmask {{ svm_netmask }} -home-port a0a-{{ vlan }} -home-node {{ cluster_name }}-02 -auto-revert true -failover-policy broadcast-domain-wide -firewall-policy data -failover-group {{ failover_group }} -status-admin up " ]
+    command             : [ "network interface create -vserver {{ svm_name | lower }} -lif {{ svm_name | lower }}_cifs_lif02 -role data -data-protocol cifs -address {{ svm_lif2_ip }} -netmask {{ svm_netmask }} -home-port a0a-{{ vlan2 }} -home-node {{ cluster_name }}-02 -auto-revert true -failover-policy broadcast-domain-wide -firewall-policy data -failover-group {{ failover_group }} -status-admin up " ]
     ontapi              : 32
     https               : true
     validate_certs      : false
