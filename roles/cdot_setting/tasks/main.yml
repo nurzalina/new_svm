@@ -176,7 +176,7 @@
     from_address: "{{ cluster_name | upper }}-01@exxonmobil.com"
     partner_addresses: autosupport@netapp.com
     to_addresses: support@netapp.com
-    proxy_url: "NA\\xsNetAppAutoSupport:kd5gb8yu@{{ proxy_fqdn | upper }}:8080"
+    # proxy_url: "NA\\xsNetAppAutoSupport:kd5gb8yu@{{ proxy_fqdn | upper }}:8080"
     https: true
     validate_certs: false
   connection: local
@@ -194,7 +194,7 @@
     from_address: "{{ cluster_name | upper }}-02@exxonmobil.com"
     partner_addresses: autosupport@netapp.com
     to_addresses: support@netapp.com
-    proxy_url: "NA\\xsNetAppAutoSupport:kd5gb8yu@{{ proxy_fqdn | upper }}:8080"
+    # proxy_url: "NA\\xsNetAppAutoSupport:kd5gb8yu@{{ proxy_fqdn | upper }}:8080"
     https: true
     validate_certs: false
   connection: local
