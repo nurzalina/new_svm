@@ -28,7 +28,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : [ 'network port broadcast-domain create -broadcast-domain {{ bd_vlan2 }} -mtu 1500 -ports {{ cluster_name | upper }}-01:a0a-{{ vlan2 }}, {{ cluster_name | upper }}-02:a0a-{{ vlan2 }}']
+    command             : [ 'network port broadcast-domain create -broadcast-domain {{ failover_group }} -mtu 1500 -ports {{ cluster_name | upper }}-01:a0a-{{ vlan2 }}, {{ cluster_name | upper }}-02:a0a-{{ vlan2 }}']
     ontapi              : 32
     https               : true
     validate_certs      : false
