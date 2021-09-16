@@ -1,0 +1,62 @@
+﻿
+- name: Enable VAAI
+  na_ontap_command:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    command             : [ 'vserver nfs modify -vserver {{ svm_name }} -vstorage enabled']
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Create Rule for default exportpolicy
+  na_ontap_export_policy_rule:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    state: present
+    name: default
+    vserver: {{ svm_name }}
+    client_match: 0.0.0.0/0
+    ro_rule: any
+    rw_rule: any
+    protocol: any
+    super_user_security: any
+    allow_suid: true
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Create Export Policy
+  na_ontap_export_policy:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    state: present
+    name: "VMWare_VLAN{{ vlan2 }}"
+    vserver: {{ svm_name }}
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local
+
+- name: Create Rule for default exportpolicy
+  na_ontap_export_policy_rule:
+    hostname            : "{{ cluster_name }}"
+    username            : "{{ netapp_username }}"
+    password            : "{{ netapp_password }}"
+    state: present
+    name: "VMWare_VLAN{{ vlan2 }}"
+    vserver: {{ svm_name }}
+    client_match: {{ failover_group }}
+    ro_rule: sys
+    rw_rule: sys
+    protocol: nfs
+    super_user_security: any
+    allow_suid: true
+    ontapi              : 32
+    https               : true
+    validate_certs      : false
+  connection            : local

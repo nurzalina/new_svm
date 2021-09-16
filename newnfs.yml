@@ -17,15 +17,8 @@
   - vars/Access_NetApp.yml
 
   roles:
-    # - flow_control
-    # - interface_group
-    # - vlan_create
-    # - configure_nodelif
-    # - std_setting
-    # - disk_assignment
-    # nfs_svm
-    - cifs_svm
+    - nfs_svm
     - route_dns
     - join_domain
     - ls_volume
-    - cifs_security_setting
+    - nfs_security_setting
