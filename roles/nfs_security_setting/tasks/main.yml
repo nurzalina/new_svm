@@ -12,7 +12,7 @@
       - vserver services
     access_level: all
     vserver: "{{ svm_name | lower }}"
-    hostname: "{{ cluster_hostname }}"
+    hostname: "{{ cluster_name }}"
     username: "{{ netapp_username }}"
     password: "{{ netapp_password }}"
 
@@ -27,7 +27,7 @@
       - volume
     access_level: readonly
     vserver: "{{ svm_name | lower }}"
-    hostname: "{{ cluster_hostname }}"
+    hostname: "{{ cluster_name }}"
     username: "{{ netapp_username }}"
     password: "{{ netapp_password }}"
 
@@ -45,7 +45,7 @@
       - vserver services web
     access_level: none
     vserver: "{{ svm_name | lower }}"
-    hostname: "{{ cluster_hostname }}"
+    hostname: "{{ cluster_name }}"
     username: "{{ netapp_username }}"
     password: "{{ netapp_password }}"
 
