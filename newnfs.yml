@@ -20,5 +20,5 @@
     # - nfs_svm
     # - route_dns
     # - join_domain
-    - ls_volume
+    # - ls_volume
     - nfs_security_setting
