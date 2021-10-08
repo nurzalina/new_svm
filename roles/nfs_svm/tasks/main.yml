@@ -92,7 +92,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : [ "nfs create -vserver {{ svm_name }} -access true -v3 enabled -v4.1 enabled -vstorage enabled -showmount enabled" ]
+    command             : [ "nfs create -vserver {{ svm_name | lower }} -access true -v3 enabled -v4.1 enabled -vstorage enabled -showmount enabled" ]
     ontapi              : 32
     https               : true
     validate_certs      : false
@@ -103,7 +103,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : [ "vserver services name-service nis-domain create -vserver {{ svm_name }} -domain {{ nis_domain }} -active true -servers {{ nis_ip }}" ]
+    command             : [ "vserver services name-service nis-domain create -vserver {{ svm_name | lower }} -domain {{ nis_domain | lower }} -active true -servers {{ nis_ip }}" ]
     ontapi              : 32
     https               : true
     validate_certs      : false
@@ -136,7 +136,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : [ "vserver services name-service ns-switch modify -vserver {{ svm_name }} -database passwd -sources files,nis" ]
+    command             : [ "vserver services name-service ns-switch modify -vserver {{ svm_name | lower }} -database passwd -sources files,nis" ]
     ontapi              : 32
     https               : true
     validate_certs      : false
@@ -147,7 +147,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : [ "vserver services name-service ns-switch modify -vserver {{ svm_name }} -database netgroup -sources files,nis" ]
+    command             : [ "vserver services name-service ns-switch modify -vserver {{ svm_name | lower }} -database netgroup -sources files,nis" ]
     ontapi              : 32
     https               : true
     validate_certs      : false
@@ -158,7 +158,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : [ "vserver services name-service ns-switch modify -vserver {{ svm_name }} -database group -sources files,nis" ]
+    command             : [ "vserver services name-service ns-switch modify -vserver {{ svm_name | lower }} -database group -sources files,nis" ]
     ontapi              : 32
     https               : true
     validate_certs      : false

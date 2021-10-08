@@ -11,7 +11,7 @@
       - vserver nfs
       - vserver services
     access_level: all
-    vserver: "{{ svm_name }}"
+    vserver: "{{ svm_name | lower }}"
     hostname: "{{ cluster_hostname }}"
     username: "{{ netapp_username }}"
     password: "{{ netapp_password }}"
@@ -26,7 +26,7 @@
       - vserver
       - volume
     access_level: readonly
-    vserver: "{{ svm_name }}"
+    vserver: "{{ svm_name | lower }}"
     hostname: "{{ cluster_hostname }}"
     username: "{{ netapp_username }}"
     password: "{{ netapp_password }}"
@@ -44,7 +44,7 @@
       - vserver services ndmp
       - vserver services web
     access_level: none
-    vserver: "{{ svm_name }}"
+    vserver: "{{ svm_name | lower }}"
     hostname: "{{ cluster_hostname }}"
     username: "{{ netapp_username }}"
     password: "{{ netapp_password }}"
@@ -54,7 +54,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : [ 'security login create -user NA\NA.UnixServers.Ops.GG -auth domain -role nfs_admin -app ssh -vserver {{ svm_name }}']
+    command             : [ 'security login create -user NA\NA.UnixServers.Ops.GG -auth domain -role nfs_admin -app ssh -vserver {{ svm_name | lower }}']
     ontapi              : 32
     https               : true
     validate_certs      : false
