@@ -17,8 +17,8 @@
   - vars/Access_NetApp.yml
 
   roles:
-    # - cifs_svm
-    # - route_dns
-    # - join_domain
-    # - ls_volume
+    - cifs_svm
+    - route_dns
+    - join_domain
+    - ls_volume
     - cifs_security_setting
