@@ -17,8 +17,8 @@
   - vars/Access_NetApp.yml
 
   roles:
-    # - nfs_svm
-    # - route_dns
-    # - join_domain
-    # - ls_volume
+    - nfs_svm
+    - route_dns
+    - join_domain
+    - ls_volume
     - vm_security_setting
