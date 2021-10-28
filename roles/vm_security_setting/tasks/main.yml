@@ -4,7 +4,7 @@
     hostname            : "{{ cluster_name }}"
     username            : "{{ netapp_username }}"
     password            : "{{ netapp_password }}"
-    command             : [ 'vserver nfs modify -vserver {{ svm_name }} -vstorage enabled' ]
+    command             : [ 'vserver nfs modify -vserver {{ svm_name | lower }} -vstorage enabled' ]
     ontapi              : 32
     https               : true
     validate_certs      : false
@@ -17,7 +17,7 @@
     password            : "{{ netapp_password }}"
     state: present
     name: default
-    vserver: "{{ svm_name }}"
+    vserver: "{{ svm_name | lower }}"
     client_match: 0.0.0.0/0
     ro_rule: any
     rw_rule: any
@@ -36,7 +36,7 @@
     password            : "{{ netapp_password }}"
     state: present
     name: "VMWare_VLAN{{ vlan2 }}"
-    vserver: "{{ svm_name }}"
+    vserver: "{{ svm_name | lower }}"
     ontapi              : 32
     https               : true
     validate_certs      : false
